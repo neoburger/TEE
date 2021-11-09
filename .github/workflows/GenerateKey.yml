@@ -1,0 +1,14 @@
+name: run
+
+on: workflow_dispatch
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: GitHub Script
+      uses: actions/github-script@v5.0.0
+      with:
+        script: console.log("ok")
