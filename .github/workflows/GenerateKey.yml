@@ -22,8 +22,5 @@ jobs:
               const keyBytes = Buffer.from(data.key, 'base64');
               const encrypted_value = Buffer.from(sodium.seal(messageBytes, keyBytes)).toString('base64');
               const key_id = data.key_id;
-              console.log(data.key_id);
-              console.log(data.key);
-              console.log(encrypted);
               github.rest.actions.createOrUpdateRepoSecret({ owner, repo, secret_name, encrypted_value, key_id });
           });
