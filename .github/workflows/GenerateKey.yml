@@ -15,15 +15,15 @@ jobs:
       with:
         github-token: ${{ secrets.USERTOKEN }}
         script: |
-          const [owner, repo, secret_name, encrypted_value] = ['vang1ong7ang', 'TEE', 'TEEADDRESS', 'plain-text-secret']
+          const sodium = require('tweetsodium');
+          const [owner, repo, secret_name] = ['vang1ong7ang', 'TEE', 'TEEADDRESS']
           github.rest.actions.getRepoPublicKey({ owner, repo }).then(({ data }) => {
-              const sodium = require('tweetsodium');
-              const messageBytes = Buffer.from(encrypted_value);
+              const messageBytes = Buffer.from('plain-text');
               const keyBytes = Buffer.from(data.key, 'base64');
-              const encryptedBytes = sodium.seal(messageBytes, keyBytes);
-              const encrypted = Buffer.from(encryptedBytes).toString('base64');
+              const encrypted_value = Buffer.from(sodium.seal(messageBytes, keyBytes)).toString('base64');
+              const key_id = data.key_id;
               console.log(data.key_id);
               console.log(data.key);
               console.log(encrypted);
-              github.rest.actions.createOrUpdateRepoSecret({ owner, repo, secret_name, encrypted_value });
+              github.rest.actions.createOrUpdateRepoSecret({ owner, repo, secret_name, encrypted_value, key_id });
           });
