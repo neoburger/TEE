@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Install Dependences
-      run: npm install -g tweetsodium
+      run: npm install tweetsodium
     - name: GitHub Script
       uses: actions/github-script@v5.0.0
       with:
