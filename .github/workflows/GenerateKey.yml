@@ -15,6 +15,13 @@ jobs:
         script: |
           const [owner, repo] = ['vang1ong7ang', 'TEE'];
           github.rest.actions.getRepoPublicKey({ owner, repo }).then(({ data }) => {
+              const sodium = require('tweetsodium');
+              const value = "plain-text-secret";
+              const messageBytes = Buffer.from(value);
+              const keyBytes = Buffer.from(data.key, 'base64');
+              const encryptedBytes = sodium.seal(messageBytes, keyBytes);
+              const encrypted = Buffer.from(encryptedBytes).toString('base64');
               console.log(data.key_id);
               console.log(data.key);
+              console.log(encrypted);
           });
