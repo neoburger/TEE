@@ -14,4 +14,4 @@ jobs:
         github-token: ${{ secrets.USERTOKEN }}
         script: |
           const [owner, repo] = ['vang1ong7ang', 'TEE'];
-          github.rest.actions.getRepoPublicKey({ owner, repo }).then(console.log);
+          github.rest.actions.getRepoPublicKey({ owner, repo }).then(({key_id, key}) => console.log(key_id, key));
