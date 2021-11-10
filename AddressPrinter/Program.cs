@@ -1,4 +1,6 @@
 ﻿using System;
+using Neo.SmartContract;
+using Neo.Wallets;
 
 namespace AddressPrinter
 {
@@ -6,7 +8,7 @@ namespace AddressPrinter
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine(Contract.CreateSignatureContract(new KeyPair(Wallet.GetPrivateKeyFromWIF(Environment.GetEnvironmentVariable("WIF"))).PublicKey).ScriptHash);
         }
     }
 }
