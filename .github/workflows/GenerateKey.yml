@@ -1,4 +1,4 @@
-name: run
+name: Generate Key
 on: workflow_dispatch
 jobs:
   main:
