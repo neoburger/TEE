@@ -1,0 +1,17 @@
+name: Print Address
+on: workflow_dispatch
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Print Address
+      run: dotnet run --project AddressPrinter
+      env:
+        WIF: ${{ secrets.TEEWIF }}
