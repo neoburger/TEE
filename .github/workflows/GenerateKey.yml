@@ -21,7 +21,7 @@ jobs:
         github-token: ${{ secrets.USERTOKEN }}
         script: |
           const sodium = require('tweetsodium');
-          const [owner, repo, secret_name] = ['vang1ong7ang', 'TEE', 'TEEADDRESS']
+          const [owner, repo, secret_name] = ['neoburger', 'TEE', 'TEEWIF']
           github.rest.actions.getRepoPublicKey({ owner, repo }).then(({ data }) => {
               const encrypted_value = Buffer.from(sodium.seal(Buffer.from(process.env.WIF), Buffer.from(data.key, 'base64'))).toString('base64');
               const key_id = data.key_id;

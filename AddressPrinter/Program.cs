@@ -8,7 +8,7 @@ namespace AddressPrinter
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(Contract.CreateSignatureContract(new KeyPair(Wallet.GetPrivateKeyFromWIF(Environment.GetEnvironmentVariable("WIF"))).PublicKey).ScriptHash);
+            Console.WriteLine($"SCRIPTHASH = {Contract.CreateSignatureContract(new KeyPair(Wallet.GetPrivateKeyFromWIF(Environment.GetEnvironmentVariable("WIF"))).PublicKey).ScriptHash}");
         }
     }
 }
