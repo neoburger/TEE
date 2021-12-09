@@ -42,9 +42,9 @@ namespace GovernanceRetriever
         }
         Program()
         {
-            agents = GetAgents();
-            candidates = GetCandidates();
-            agentstates = GetAccountStates(agents);
+            agents = InvokeScript(Enumerable.Range(0, 21).Select(v => BNEO.MakeScript("agent", v)).SelectMany(a => a).ToArray()).TakeWhile(v => v.IsNull == false).Select(v => new UInt160(v.GetSpan())).ToList();
+            candidates = InvokeScript(NativeContract.NEO.Hash.MakeScript("getCandidates")).Select(v => (Neo.VM.Types.Array)v).Single().Select(v => (Neo.VM.Types.Struct)v).Select(v => (v.First().GetSpan().ToArray(), v.Last().GetInteger())).ToList();
+            agentstates = InvokeScript(agents.Select(v => NativeContract.NEO.Hash.MakeScript("getAccountState", v)).SelectMany(a => a).ToArray()).Select(v => (Neo.VM.Types.Struct)v).Select(v => (v.Last().GetSpan().ToArray(), v.First().GetInteger())).ToList();
             filtered = new(() => candidates.Select(v => (v.Item1, v.Item2 - agentstates.Where(w => w.Item1.SequenceEqual(v.Item1)).SingleOrDefault().Item2)).ToList());
             neo = new(() => agentstates.Select(v => v.Item2).Sum());
         }
@@ -56,21 +56,6 @@ namespace GovernanceRetriever
                 throw new Exception();
             }
             return result.Stack;
-        }
-        static List<UInt160> GetAgents()
-        {
-            byte[] script = Enumerable.Range(0, 21).Select(v => BNEO.MakeScript("agent", v)).SelectMany(a => a).ToArray();
-            return InvokeScript(script).TakeWhile(v => v.IsNull == false).Select(v => new UInt160(v.GetSpan())).ToList();
-        }
-        static List<(byte[], BigInteger)> GetAccountStates(IEnumerable<UInt160> agents)
-        {
-            byte[] script = agents.Select(v => NativeContract.NEO.Hash.MakeScript("getAccountState", v)).SelectMany(a => a).ToArray();
-            return InvokeScript(script).Select(v => (Neo.VM.Types.Struct)v).Select(v => (v.Last().GetSpan().ToArray(), v.First().GetInteger())).ToList();
-        }
-        static List<(byte[], BigInteger)> GetCandidates()
-        {
-            byte[] script = NativeContract.NEO.Hash.MakeScript("getCandidates");
-            return InvokeScript(script).Select(v => (Neo.VM.Types.Array)v).Single().Select(v => (Neo.VM.Types.Struct)v).Select(v => (v.First().GetSpan().ToArray(), v.Last().GetInteger())).ToList();
         }
     }
 }
