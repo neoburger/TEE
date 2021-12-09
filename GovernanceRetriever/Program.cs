@@ -2,12 +2,6 @@
 using Neo;
 using Neo.Network.RPC;
 using Neo.SmartContract.Native;
-using Neo;
-using Neo.Network.P2P.Payloads;
-using Neo.Network.RPC;
-using Neo.SmartContract;
-using Neo.SmartContract.Native;
-using Neo.Wallets;
 using Neo.VM;
 using Neo.Network.RPC.Models;
 using System.Collections.Generic;
