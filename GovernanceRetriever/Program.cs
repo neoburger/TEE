@@ -23,24 +23,24 @@ namespace GovernanceRetriever
         public List<(byte[], BigInteger)> agentstates;
         public Lazy<List<(byte[], BigInteger)>> filtered;
         public Lazy<BigInteger> neo;
+        public static Program Instance = new();
         static void Main(string[] args)
         {
-            Program program = new();
             Console.WriteLine($"AGENT LIST:");
-            program.agents.ForEach(v => Console.WriteLine($"{v}"));
+            Instance.agents.ForEach(v => Console.WriteLine($"{v}"));
             Console.WriteLine($"");
             Console.WriteLine($"AGENT STATUS(VOTE_TARGET: NEOBALANCE):");
-            program.agentstates.ForEach(v => Console.WriteLine($"{v.Item1.ToHexString()}: {v.Item2}"));
+            Instance.agentstates.ForEach(v => Console.WriteLine($"{v.Item1.ToHexString()}: {v.Item2}"));
             Console.WriteLine($"");
             Console.WriteLine($"CANDIDATE STATUS(PUBLICKEY: NEOVOTED):");
-            program.agentstates.ForEach(v => Console.WriteLine($"{v.Item1.ToHexString()}: {v.Item2}"));
+            Instance.agentstates.ForEach(v => Console.WriteLine($"{v.Item1.ToHexString()}: {v.Item2}"));
             Console.WriteLine($"");
             Console.WriteLine($"CANDIDATE STATUS BURGER REMOVED(PUBLICKEY: NEOVOTED):");
-            program.filtered.Value.ForEach(v => Console.WriteLine($"{v.Item1.ToHexString()}: {v.Item2}"));
+            Instance.filtered.Value.ForEach(v => Console.WriteLine($"{v.Item1.ToHexString()}: {v.Item2}"));
             Console.WriteLine($"");
-            Console.WriteLine($"NEO HOLD: {program.neo.Value}");
+            Console.WriteLine($"NEO HOLD: {Instance.neo.Value}");
         }
-        Program()
+        private Program()
         {
             agents = InvokeScript(Enumerable.Range(0, 21).Select(v => BNEO.MakeScript("agent", v)).SelectMany(a => a).ToArray()).TakeWhile(v => v.IsNull == false).Select(v => new UInt160(v.GetSpan())).ToList();
             candidates = InvokeScript(NativeContract.NEO.Hash.MakeScript("getCandidates")).Select(v => (Neo.VM.Types.Array)v).Single().Select(v => (Neo.VM.Types.Struct)v).Select(v => (v.First().GetSpan().ToArray(), v.Last().GetInteger())).ToList();
