@@ -11,7 +11,7 @@ using System.Numerics;
 
 namespace GovernanceRetriever
 {
-    class Program
+    public class Program
     {
         private static readonly string RPC = Environment.GetEnvironmentVariable("RPC");
         private static readonly Uri URI = new(RPC);
