@@ -18,14 +18,13 @@ namespace NeoWallet
         public static Program Instance = new();
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-        }
-        private Program()
-        {
             string SCRIPT = Environment.GetEnvironmentVariable("SCRIPT");
             byte[] script = SCRIPT.HexToBytes();
             UInt256 txid = Instance.SendTx(script);
             Console.WriteLine(txid);
+        }
+        private Program()
+        {
         }
         public UInt256 SendTx(byte[] script)
         {
