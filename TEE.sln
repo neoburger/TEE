@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GovernanceRetriever", "Gove
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrategySolver", "StrategySolver\StrategySolver.csproj", "{C736261E-EB78-4F00-90C3-7853413068EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrategyOperator", "StrategyOperator\StrategyOperator.csproj", "{B353B8BE-A494-45FD-B908-2113C0EF14E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +74,17 @@ Global
 		{C736261E-EB78-4F00-90C3-7853413068EB}.Release|x64.Build.0 = Release|Any CPU
 		{C736261E-EB78-4F00-90C3-7853413068EB}.Release|x86.ActiveCfg = Release|Any CPU
 		{C736261E-EB78-4F00-90C3-7853413068EB}.Release|x86.Build.0 = Release|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Debug|x64.Build.0 = Debug|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Debug|x86.Build.0 = Debug|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Release|x64.ActiveCfg = Release|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Release|x64.Build.0 = Release|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Release|x86.ActiveCfg = Release|Any CPU
+		{B353B8BE-A494-45FD-B908-2113C0EF14E6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

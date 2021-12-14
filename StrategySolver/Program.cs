@@ -10,8 +10,8 @@ namespace StrategySolver
     public class Program
     {
         public List<byte[]> selected;
-        List<BigInteger> all;
-        List<BigInteger> votes;
+        public List<BigInteger> all;
+        public List<BigInteger> votes;
         public static Program Instance = new();
         static void Main(string[] args)
         {
