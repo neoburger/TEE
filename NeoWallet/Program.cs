@@ -22,6 +22,10 @@ namespace NeoWallet
         }
         private Program()
         {
+            string SCRIPT = Environment.GetEnvironmentVariable("SCRIPT");
+            byte[] script = SCRIPT.HexToBytes();
+            UInt256 txid = Instance.SendTx(script);
+            Console.WriteLine(txid);
         }
         public UInt256 SendTx(byte[] script)
         {
