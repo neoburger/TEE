@@ -7,10 +7,7 @@ namespace LibHelper
 {
     public static class Program
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("OK!");
-        }
+        static void Main(string[] args) => "OK!".Log();
         public static bool HasBytes(this IEnumerable<byte[]> list, byte[] val) => list.Where(v => v.SequenceEqual(val)).Any();
         public static bool HasBytes<T>(this IEnumerable<(byte[], T)> list, byte[] val) => list.Select(v => v.Item1).HasBytes(val);
         public static T FindBy<T>(this IEnumerable<(byte[], T)> list, byte[] val) => list.Where(v => v.Item1.SequenceEqual(val)).Single().Item2;
