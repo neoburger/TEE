@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LibHelper\LibHelper.csproj" />
+    <ProjectReference Include="..\LibRPC\LibRPC.csproj" />
   </ItemGroup>
 
 </Project>

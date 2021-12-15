@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using Neo.Wallets;
+using LibHelper;
 
 namespace KeyGenerator
 {
@@ -10,7 +11,7 @@ namespace KeyGenerator
         {
             var sk = new byte[32];
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create()) { rng.GetBytes(sk); }
-            Console.WriteLine(new KeyPair(sk).Export());
+            new KeyPair(sk).Export().Out();
         }
     }
 }
