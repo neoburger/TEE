@@ -32,6 +32,7 @@ namespace StrategySolver
             all = rates.Select(v => v * unit).Select(v => (BigInteger)v).ToList();
             votes = all.Zip(kv.Select(v => (BigInteger)v.Item2)).Select(v => v.First - v.Second).ToList();
             votes[0] += GovernanceRetriever.Program.Instance.neo.Value - votes.Sum();
+            if (votes.Where(v => v < 0).Any()) throw new Exception("negtive vote found");
         }
     }
 }

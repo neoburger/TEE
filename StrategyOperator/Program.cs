@@ -12,7 +12,7 @@ namespace StrategyOperator
         {
             var src = GovernanceRetriever.Program.Instance.agentstates.Select((value, i) => (i, value.Item1, value.Item2)).ToList();
             var dst = StrategySolver.Program.Instance.selected.Zip(StrategySolver.Program.Instance.votes).ToList();
-            
+
             var keepTargetSrc = src.Where(v => dst.Where(w => w.Item1.SequenceEqual(v.Item2)).Any()).ToList();
             var changeTargetSrc = src.Where(v => !dst.Where(w => w.Item1.SequenceEqual(v.Item2)).Any()).Zip(dst.Where(v => !src.Where(w => w.Item2.SequenceEqual(v.Item1)).Any())).Select(v => (v.First.Item1, v.Second.Item1, v.First.Item3));
             src.Where(v => !dst.Where(w => w.Item1.SequenceEqual(v.Item2)).Any()).Zip(dst.Where(v => !src.Where(w => w.Item2.SequenceEqual(v.Item1)).Any())).ToList().ForEach(v => Console.WriteLine($"invoke 0x48c40d4666f93408be1bef038b6722404d9a4c2a trigVote [{{\"type\":\"Integer\",\"value\":\"{v.First.Item1}\"}},{{\"type\":\"PublicKey\",\"value\":\"{v.Second.Item1.ToHexString()}\"}}]"));
