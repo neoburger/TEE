@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibHelper\LibHelper.csproj" />
+    <PackageReference Include="Neo" Version="3.0.3" />
+    <PackageReference Include="Neo.Network.RPC.RpcClient" Version="3.0.3" />
   </ItemGroup>
 
 </Project>
