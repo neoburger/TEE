@@ -13,7 +13,7 @@ namespace LibHelper
         }
         public static bool HasBytes(this IEnumerable<byte[]> list, byte[] val) => list.Where(v => v.SequenceEqual(val)).Any();
         public static bool HasBytes<T>(this IEnumerable<(byte[], T)> list, byte[] val) => list.Select(v => v.Item1).HasBytes(val);
-        public static T FindBytes<T>(this IEnumerable<(byte[], T)> list, byte[] val) => list.Where(v => v.Item1.SequenceEqual(val)).Single().Item2;
+        public static T FindBy<T>(this IEnumerable<(byte[], T)> list, byte[] val) => list.Where(v => v.Item1.SequenceEqual(val)).Single().Item2;
         public static void SortBy<T>(this List<T> list, Func<T, IComparable> f) => list.Sort((x, y) => f(x).CompareTo(f(y)));
         public static void Log<T>(this T val) => Console.Error.WriteLine(val);
         public static void Out<T>(this T val) => Console.WriteLine(val);
