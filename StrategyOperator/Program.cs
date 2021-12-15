@@ -15,7 +15,7 @@ namespace StrategyOperator
 
             var keepTargetSrc = src.Where(v => dst.Where(w => w.Item1.SequenceEqual(v.Item2)).Any()).ToList();
             var changeTargetSrc = src.Where(v => !dst.Where(w => w.Item1.SequenceEqual(v.Item2)).Any()).Zip(dst.Where(v => !src.Where(w => w.Item2.SequenceEqual(v.Item1)).Any())).Select(v => (v.First.Item1, v.Second.Item1, v.First.Item3));
-            src.Where(v => !dst.Where(w => w.Item1.SequenceEqual(v.Item2)).Any()).Zip(dst.Where(v => !src.Where(w => w.Item2.SequenceEqual(v.Item1)).Any())).ToList().ForEach(v => Console.WriteLine($"set vote target for agent{v.First.Item1} from {v.First.Item2.ToHexString()} to {v.Second.Item1.ToHexString()}"));
+            src.Where(v => !dst.Where(w => w.Item1.SequenceEqual(v.Item2)).Any()).Zip(dst.Where(v => !src.Where(w => w.Item2.SequenceEqual(v.Item1)).Any())).ToList().ForEach(v => Console.WriteLine($"invoke 0x48c40d4666f93408be1bef038b6722404d9a4c2a trigVote [{{\"type\":\"Integer\",\"value\":\"{v.First.Item1}\"}},{{\"type\":\"PublicKey\",\"value\":\"{v.Second.Item1.ToHexString()}\"}}]"));
             var newSrc = keepTargetSrc.Concat(changeTargetSrc).ToList();
 
             var difference = newSrc.Select(v => (v.Item1, v.Item2, v.Item3 - dst.Where(w => w.Item1.SequenceEqual(v.Item2)).First().Item2)).ToList();
@@ -23,7 +23,7 @@ namespace StrategyOperator
 
             BigInteger prefixSum = 0;
             var sumDifference = difference.Select(v => (v.Item1, v.Item2, prefixSum += v.Item3)).ToList();
-            sumDifference.SkipLast(1).Select((value, i) => (value, i)).ToList().ForEach(v => Console.WriteLine($"transfer from agent{v.Item1.Item1} to agent{difference[v.Item2 + 1].Item1} for {v.Item1.Item3}"));
+            sumDifference.SkipLast(1).Select((value, i) => (value, i)).ToList().ForEach(v => Console.WriteLine($"invoke 0x48c40d4666f93408be1bef038b6722404d9a4c2a trigTransfer [{{\"type\":\"Integer\",\"value\":\"{v.Item1.Item1}\"}},{{\"type\":\"Integer\",\"value\":\"{difference[v.Item2 + 1].Item1}\"}},{{\"type\":\"Integer\",\"value\":\"{v.Item1.Item3}\"}}]"));
         }
     }
 }
