@@ -34,10 +34,10 @@ namespace StrategySolver
             votes[0] += GovernanceRetriever.Program.Instance.neo.Value - votes.Sum();
             if (votes.Where(v => v < 0).Any()) throw new Exception("negtive vote found");
             
-            var rpbpn_old = GovernanceRetriever.Program.Instance.agentstates.Select(v=>v.Item1).Select(v => (v, GovernanceRetriever.Program.Instance.filtered.Value.Where(w => w.Item1.SequenceEqual(v)).Single().Item2, GovernanceRetriever.Program.Instance.agentstates.Where(w => w.Item1.SequenceEqual(v)).Single().Item2, elected.Take(14).Select(v => (v.Item1, BigInteger.Parse("1"))).Concat(elected.TakeLast(7).Select(v => (v.Item1, BigInteger.Parse("2"))) ).Where(w => w.Item1.SequenceEqual(v)).Single().Item2 )).Select(v => BigInteger.Parse("100000000") * v.Item4*v.Item3 / (v.Item2+v.Item3) + v.Item3 / 2).Sum() / 7;
-            Console.WriteLine($"Old GAS reward per block per NEO: { ((decimal)rpbpn_old) / ((decimal)selected.Select(v =>GovernanceRetriever.Program.Instance.agentstates.Where(w => w.Item1.SequenceEqual(v)).Single().Item2).Sum()) } ");
+            var rpbpn_old = GovernanceRetriever.Program.Instance.agentstates.Select(v => (v.Item1, GovernanceRetriever.Program.Instance.filtered.Value.Where(w => w.Item1.SequenceEqual(v.Item1)).Single().Item2, v.Item2, elected.Take(14).Select(v => (v.Item1, BigInteger.Parse("1"))).Concat(elected.TakeLast(7).Select(v => (v.Item1, BigInteger.Parse("2"))) ).Where(w => w.Item1.SequenceEqual(v.Item1)).Single().Item2 )).Select(v => BigInteger.Parse("100000000") * v.Item4*v.Item3 / (v.Item2+v.Item3) + v.Item3 / 2).Sum() / 7;
+            Console.WriteLine($"Old GAS reward per block per NEO: { ((decimal)rpbpn_old) / ((decimal)GovernanceRetriever.Program.Instance.agentstates.Select(v=>v.Item2).Sum()) } ");
             var rpbpn_new = selected.Select(v => (v, GovernanceRetriever.Program.Instance.filtered.Value.Where(w => w.Item1.SequenceEqual(v)).Single().Item2, selected.Zip(votes).Where(w => w.Item1.SequenceEqual(v)).Single().Item2, elected.Take(14).Select(v => (v.Item1, BigInteger.Parse("1"))).Concat(elected.TakeLast(7).Select(v => (v.Item1, BigInteger.Parse("2"))) ).Where(w => w.Item1.SequenceEqual(v)).Single().Item2 )).Select(v => BigInteger.Parse("100000000") * v.Item4*v.Item3 / (v.Item2+v.Item3) + v.Item3 / 2).Sum() / 7;
-            Console.WriteLine($"New GAS reward per block per NEO: { ((decimal)rpbpn_new) / ((decimal)selected.Select(v =>GovernanceRetriever.Program.Instance.agentstates.Where(w => w.Item1.SequenceEqual(v)).Single().Item2).Sum()) } ");
+            Console.WriteLine($"New GAS reward per block per NEO: { ((decimal)rpbpn_new) / ((decimal)GovernanceRetriever.Program.Instance.agentstates.Select(v=>v.Item2).Sum()) } ");
         }
     }
 }
