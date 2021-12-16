@@ -1,4 +1,4 @@
-name: EXECUTION.20211216
+name: EXEC-20211216
 on: workflow_dispatch
 jobs:
   main:
