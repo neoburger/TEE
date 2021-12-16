@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibRPC", "LibRPC\LibRPC.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibHelper", "LibHelper\LibHelper.csproj", "{101A84EB-EE57-455E-9209-6592DA368650}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategist", "Strategist\Strategist.csproj", "{665C3614-DEFF-4B6D-B910-6F7A326105F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -142,5 +144,17 @@ Global
 		{101A84EB-EE57-455E-9209-6592DA368650}.Release|x64.Build.0 = Release|Any CPU
 		{101A84EB-EE57-455E-9209-6592DA368650}.Release|x86.ActiveCfg = Release|Any CPU
 		{101A84EB-EE57-455E-9209-6592DA368650}.Release|x86.Build.0 = Release|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Debug|x64.Build.0 = Debug|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Debug|x86.Build.0 = Debug|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Release|x64.ActiveCfg = Release|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Release|x64.Build.0 = Release|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Release|x86.ActiveCfg = Release|Any CPU
+		{665C3614-DEFF-4B6D-B910-6F7A326105F2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
