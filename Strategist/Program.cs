@@ -54,7 +54,7 @@ namespace Strategist
 
             List<byte[]> SELECTS = CMS.Take(AGENTS.Count).ToList();
             List<BigInteger> SELECT_K = SELECTS.Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v)).ToList();
-            List<BigInteger> SELECT_V = CM_V.Take(AGENTS.Count).ToList();
+            List<BigInteger> SELECT_V = SELECTS.Select(v => CANDIDATES.Zip(CANDIDATE_V).FindBy(v)).ToList();
             $"SELECTS: {String.Join(", ", SELECTS.Select(v => v.ToHexString()))}".Log();
             $"SELECT_K: {String.Join(", ", SELECT_K)}".Log();
             $"SELECT_V: {String.Join(", ", SELECT_V)}".Log();
