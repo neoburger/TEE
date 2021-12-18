@@ -51,7 +51,7 @@ namespace Strategist
             $"CM_V: {String.Join(", ", CM_V)}".Log();
 
             // TODO: FIX
-            if (AGENTS.Count > 12) throw new Exception();
+            (AGENTS.Count < 12).Assert();
 
             List<byte[]> SELECTS = CMS.Take(AGENTS.Count).ToList();
             List<BigInteger> SELECT_K = SELECTS.Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v)).ToList();
@@ -82,9 +82,13 @@ namespace Strategist
             BigInteger SCORE0 = AGENT_TO.Zip(AGENT_HOLD).Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v.First) * v.Second / (v.Second + CANDIDATES.Zip(CANDIDATE_V).FindBy(v.First))).Sum();
             BigInteger SCORE = SELECTS.Zip(SELECT_HOLD).Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v.First) * v.Second / (v.Second + CANDIDATES.Zip(CANDIDATE_V).FindBy(v.First))).Sum();
             $"SCORE: {SCORE0} => {SCORE}".Log();
-
+            (SCORE0 <= SCORE).Assert();
             // TODO: FIX
-            // SKIP IF SCORE NOT GOOD ENOUGH
+            if (SCORE / (SCORE - SCORE0) > 10000)
+            {
+                $"NOT GOOD ENOUGH".Log();
+                return;
+            }
 
             Queue<byte[]> changes = new(SELECTS.Where(v => AGENT_TO.HasBytes(v) == false));
             List<byte[]> AGENT_TON = AGENT_TO.Select(v => SELECTS.HasBytes(v) ? v : changes.Dequeue()).ToList();
@@ -114,7 +118,7 @@ namespace Strategist
             List<byte[]> SCRIPTTRANSFERS = ACTIONS.Select((v, i) => BNEO.MakeScript("trigTransfer", TRANSFERS[i], TRANSFERS[i + 1], v)).ToList();
             $"SCRIPTTRANSFERS: {String.Join(", ", SCRIPTTRANSFERS.Select(v => v.ToHexString()))}".Log();
 
-            SCRIPTVOTES.Concat(SCRIPTTRANSFERS).SelectMany(a => a).ToArray().SendTx();
+            SCRIPTVOTES.Concat(SCRIPTTRANSFERS).SelectMany(a => a).ToArray().SendTx().Out();
         }
     }
 }

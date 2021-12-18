@@ -19,5 +19,6 @@ namespace LibHelper
         public static byte[] ToBytes(this StackItem val) => val.GetSpan().ToArray();
         public static Neo.VM.Types.Array ToVMArray(this StackItem val) => (Neo.VM.Types.Array)val;
         public static Neo.VM.Types.Struct ToVMStruct(this StackItem val) => (Neo.VM.Types.Struct)val;
+        public static void Assert(this bool val) { if (val == false) throw new Exception(); }
     }
 }
