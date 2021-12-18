@@ -19,8 +19,8 @@ namespace LibWallet
             contract.Out();
             string SCRIPT = Environment.GetEnvironmentVariable("SCRIPT");
             if (SCRIPT is null) return;
-            SendTx(SCRIPT.HexToBytes()).Out();
+            SCRIPT.HexToBytes().SendTx().Out();
         }
-        public static UInt256 SendTx(byte[] script) => script.TxMgr().AddSignature(keypair).SignAsync().GetAwaiter().GetResult().Send();
+        public static UInt256 SendTx(this byte[] script) => script.TxMgr().AddSignature(keypair).SignAsync().GetAwaiter().GetResult().Send();
     }
 }

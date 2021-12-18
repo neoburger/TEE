@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using LibHelper;
+using LibWallet;
 using LibRPC;
 using Neo;
 using Neo.SmartContract.Native;
@@ -82,6 +83,38 @@ namespace Strategist
             BigInteger SCORE = SELECTS.Zip(SELECT_HOLD).Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v.First) * v.Second / (v.Second + CANDIDATES.Zip(CANDIDATE_V).FindBy(v.First))).Sum();
             $"SCORE: {SCORE0} => {SCORE}".Log();
 
+            // TODO: FIX
+            // SKIP IF SCORE NOT GOOD ENOUGH
+
+            Queue<byte[]> changes = new(SELECTS.Where(v => AGENT_TO.HasBytes(v) == false));
+            List<byte[]> AGENT_TON = AGENT_TO.Select(v => SELECTS.HasBytes(v) ? v : changes.Dequeue()).ToList();
+
+            List<byte[]> SCRIPTVOTES = AGENT_TON.Zip(AGENT_TO).Where(v => v.First.SequenceEqual(v.Second) == false).Select(v => BNEO.MakeScript("trigVote", AGENT_TON.IndexOf(v.First), v.First)).ToList();
+            $"SCRIPTVOTES: {String.Join(", ", SCRIPTVOTES.Select(v => v.ToHexString()))}".Log();
+
+            List<BigInteger> AGENT_HOLDN = AGENT_TON.Select(v => SELECTS.Zip(SELECT_HOLD).FindBy(v)).ToList();
+            $"AGENT_HOLDN: {String.Join(", ", AGENT_HOLDN)}".Log();
+
+            List<BigInteger> AGENT_DIFF = AGENT_HOLDN.Zip(AGENT_HOLD).Select(v => v.First - v.Second).ToList();
+            $"AGENT_DIFF: {String.Join(", ", AGENT_DIFF)}".Log();
+
+            List<(BigInteger, int)> diff = AGENT_DIFF.Select((v, i) => (v, i)).Where(v => v.Item1.IsZero == false).ToList();
+            diff.Sort();
+            List<int> TRANSFERS = diff.Select(v => v.Item2).ToList();
+            List<BigInteger> TRANSFER_AMOUNT = diff.Select(v => v.Item1).ToList();
+            $"TRANSFERS: {String.Join(", ", TRANSFERS)}".Log();
+            $"TRANSFER_AMOUNT: {String.Join(", ", TRANSFER_AMOUNT)}".Log();
+
+            List<BigInteger> actions = TRANSFER_AMOUNT.Aggregate((BigInteger.Zero, Enumerable.Empty<BigInteger>()), (stack, v) => (stack.Item1 - v, stack.Item2.Append(stack.Item1 - v))).Item2.ToList();
+            if (actions.Last() != 0) throw new Exception();
+
+            List<BigInteger> ACTIONS = actions.SkipLast(1).ToList();
+            $"ACTIONS: {String.Join(", ", ACTIONS)}".Log();
+
+            List<byte[]> SCRIPTTRANSFERS = ACTIONS.Select((v, i) => BNEO.MakeScript("trigTransfer", TRANSFERS[i], TRANSFERS[i + 1], v)).ToList();
+            $"SCRIPTTRANSFERS: {String.Join(", ", SCRIPTTRANSFERS.Select(v => v.ToHexString()))}".Log();
+
+            SCRIPTVOTES.Concat(SCRIPTTRANSFERS).SelectMany(a => a).ToArray().SendTx();
         }
     }
 }
