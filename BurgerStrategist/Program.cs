@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using LibHelper;
-using LibWallet;
 using LibRPC;
+using LibWallet;
 using Neo;
 using Neo.SmartContract.Native;
 using Neo.VM;
 
-namespace Strategist
+namespace BurgerStrategist
 {
     class Program
     {
@@ -83,8 +83,7 @@ namespace Strategist
             BigInteger SCORE = SELECTS.Zip(SELECT_HOLD).Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v.First) * v.Second / (v.Second + CANDIDATES.Zip(CANDIDATE_V).FindBy(v.First))).Sum();
             $"SCORE: {SCORE0} => {SCORE}".Log();
             (SCORE0 <= SCORE).Assert();
-            // TODO: FIX
-            if (SCORE / (SCORE - SCORE0) > 10000)
+            if (SCORE / (SCORE + 1 - SCORE0) > 1024)
             {
                 $"NOT GOOD ENOUGH".Log();
                 return;
