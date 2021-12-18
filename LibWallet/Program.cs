@@ -21,6 +21,6 @@ namespace LibWallet
             if (SCRIPT is null) return;
             SCRIPT.HexToBytes().SendTx().Out();
         }
-        public static UInt256 SendTx(this byte[] script) => script.TxMgr().AddSignature(keypair).SignAsync().GetAwaiter().GetResult().Send();
+        public static UInt256 SendTx(this byte[] script) => script.TxMgr(signers).AddSignature(keypair).SignAsync().GetAwaiter().GetResult().Send();
     }
 }
