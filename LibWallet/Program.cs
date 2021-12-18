@@ -1,8 +1,8 @@
 ﻿using System;
 using LibHelper;
+using LibRPC;
 using Neo;
 using Neo.Network.P2P.Payloads;
-using Neo.Network.RPC;
 using Neo.SmartContract;
 using Neo.Wallets;
 
@@ -19,13 +19,8 @@ namespace LibWallet
             contract.Out();
             string SCRIPT = Environment.GetEnvironmentVariable("SCRIPT");
             if (SCRIPT is null) return;
-            SendTx(SCRIPT.HexToBytes()).Out();
+            SCRIPT.HexToBytes().SendTx().Out();
         }
-        public static UInt256 SendTx(byte[] script)
-        {
-            TransactionManager manager = LibRPC.Program.factory.MakeTransactionAsync(script, signers).GetAwaiter().GetResult();
-            Transaction tx = manager.AddSignature(keypair).SignAsync().GetAwaiter().GetResult();
-            return LibRPC.Program.Send(tx);
-        }
+        public static UInt256 SendTx(this byte[] script) => script.TxMgr().AddSignature(keypair).SignAsync().GetAwaiter().GetResult().Send();
     }
 }

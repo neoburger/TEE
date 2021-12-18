@@ -15,12 +15,13 @@ namespace LibRPC
         private static readonly Uri URI = new(RPC);
         private static readonly ProtocolSettings settings = ProtocolSettings.Load("/dev/stdin");
         private static readonly RpcClient CLI = new(URI, null, null, settings);
+        private static readonly TransactionManagerFactory factory = new(CLI);
         static void Main(string[] args)
         {
             Call(new byte[] { ((byte)OpCode.RET) });
             "OK!".Log();
         }
-        public static StackItem[] Call(byte[] script)
+        public static StackItem[] Call(this byte[] script)
         {
             RpcInvokeResult result = CLI.InvokeScriptAsync(script).GetAwaiter().GetResult();
             if (result.State != VMState.HALT)
@@ -29,7 +30,7 @@ namespace LibRPC
             }
             return result.Stack;
         }
-        public static TransactionManagerFactory factory = new(CLI);
-        public static UInt256 Send(Transaction tx) => CLI.SendRawTransactionAsync(tx).GetAwaiter().GetResult();
+        public static UInt256 Send(this Transaction tx) => CLI.SendRawTransactionAsync(tx).GetAwaiter().GetResult();
+        public static TransactionManager TxMgr(this byte[] script, Signer[] signers = null) => factory.MakeTransactionAsync(script, signers).GetAwaiter().GetResult();
     }
 }
