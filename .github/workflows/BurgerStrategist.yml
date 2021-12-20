@@ -1,5 +1,9 @@
 name: BurgerStrategist
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+  
+  schedule:
+  - cron: "0 0,4,8,12,16,20 * * *"
 jobs:
   main:
     runs-on: ubuntu-latest
