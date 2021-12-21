@@ -36,8 +36,7 @@ namespace BurgerClaimer
             );
 
             byte[] script = scripts.Aggregate((v, w) => v.ToList().Concat(w.ToList()).ToArray());
-            if (script is null) return;
-            script.SendTx();
+            script?.SendTx();
         }
     }
 }
