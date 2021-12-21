@@ -13,7 +13,7 @@ namespace BurgerClaimer
 {
     class Program
     {
-        private static readonly BigInteger Threashold = BigInteger.Parse(Environment.GetEnvironmentVariable("THREASHOLD"));
+        private static readonly BigInteger THREASHOLD = BigInteger.Parse(Environment.GetEnvironmentVariable("THREASHOLD"));
 
         static void Main(string[] args)
         {
@@ -30,8 +30,10 @@ namespace BurgerClaimer
             $"GASBALANCE: {String.Join(", ", GASBALANCE)}".Log();
             $"MERGED: {String.Join(", ", MERGED)}".Log();
 
-            List<byte[]> SYNC = AGENTS.Zip(UNCLAIMED).Where(v => v.Second > Threashold).Select(v => v.First.MakeScript("sync")).ToList();
-            List<byte[]> CLAIM = AGENTS.Zip(MERGED).Where(v => v.Second > Threashold).Select(v => v.First.MakeScript("claim")).ToList();
+            List<byte[]> SYNC = AGENTS.Zip(UNCLAIMED).Where(v => v.Second > THREASHOLD).Select(v => v.First.MakeScript("sync")).ToList();
+            List<byte[]> CLAIM = AGENTS.Zip(MERGED).Where(v => v.Second > THREASHOLD).Select(v => v.First.MakeScript("claim")).ToList();
+            $"SYNC: {String.Join(", ", SYNC.Select(v => v.ToHexString()))}".Log();
+            $"CLAIM: {String.Join(", ", CLAIM.Select(v => v.ToHexString()))}".Log();
             SYNC.Concat(CLAIM).SelectMany(v => v).ToArray()?.SendTx().Out();
         }
     }
