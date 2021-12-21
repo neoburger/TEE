@@ -35,8 +35,7 @@ namespace BurgerClaimer
                 claimScripts.Zip(claimableGas).Where(v => v.Second > Threashold).Select(v => v.First)
             );
 
-            byte[] script = scripts.Aggregate((v, w) => v.ToList().Concat(w.ToList()).ToArray());
-            script?.SendTx();
+            scripts.Aggregate((v, w) => v.ToList().Concat(w.ToList()).ToArray())?.SendTx();
         }
     }
 }
