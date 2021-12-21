@@ -31,9 +31,6 @@ namespace BurgerClaimer
             $"GASBALANCE: {String.Join(", ", GASBALANCE)}".Log();
             $"MERGED: {String.Join(", ", MERGED)}".Log();
 
-            var syncScripts = AGENTS.Select(v => v.MakeScript("sync"));
-            var claimScripts = AGENTS.Select(v => v.MakeScript("claim"));
-
             List<byte[]> SYNC = AGENTS.Zip(UNCLAIMED).Where(v => v.Second > Threashold).Select(v => v.First.MakeScript("sync")).ToList();
             List<byte[]> CLAIM = AGENTS.Zip(MERGED).Where(v => v.Second > Threashold).Select(v => v.First.MakeScript("claim")).ToList();
             SYNC.Concat(CLAIM).SelectMany(v => v).ToArray()?.SendTx().Out();
