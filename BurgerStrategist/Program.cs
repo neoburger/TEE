@@ -16,34 +16,25 @@ namespace BurgerStrategist
         static void Main(string[] args)
         {
             UInt160 BNEO = UInt160.Parse("0x48c40d4666f93408be1bef038b6722404d9a4c2a");
-            $"BNEO: {BNEO}".Log();
 
             List<UInt160> AGENTS = Enumerable.Range(0, 21).Select(v => BNEO.MakeScript("agent", v)).SelectMany(a => a).ToArray().Call().TakeWhile(v => v.IsNull == false).Select(v => v.ToU160()).ToList();
-            $"AGENTS: {String.Join(", ", AGENTS)}".Log();
+            (List<byte[]> CANDIDATES, List<BigInteger> CANDIDATE_VOTES) = NativeContract.NEO.Hash.MakeScript("getCandidates").Call().Single().ToVMArray().Select(v => v.ToVMStruct()).Map2(v => v.First().ToBytes(), v => v.Last().GetInteger());
+            (List<byte[]> AGENT_TO, List<BigInteger> AGENT_HOLD) = AGENTS.Select(v => NativeContract.NEO.Hash.MakeScript("getAccountState", v)).SelectMany(a => a).ToArray().Call().Select(v => v.ToVMStruct()).Map2(v => v.Last().ToBytes(), v => v.First().GetInteger());
 
-            List<Neo.VM.Types.Struct> candidates = NativeContract.NEO.Hash.MakeScript("getCandidates").Call().Single().ToVMArray().Select(v => v.ToVMStruct()).ToList();
-            List<byte[]> CANDIDATES = candidates.Select(v => v.First().ToBytes()).ToList();
-            List<BigInteger> CANDIDATE_VOTES = candidates.Select(v => v.Last().GetInteger()).ToList();
+            $"AGENTS: {String.Join(", ", AGENTS)}".Log();
             $"CANDIDATES: {String.Join(", ", CANDIDATES.Select(v => v.ToHexString()))}".Log();
             $"CANDIDATE_VOTES: {String.Join(", ", CANDIDATE_VOTES)}".Log();
-
-            List<Neo.VM.Types.Struct> agentstates = AGENTS.Select(v => NativeContract.NEO.Hash.MakeScript("getAccountState", v)).SelectMany(a => a).ToArray().Call().Select(v => v.ToVMStruct()).ToList();
-            List<byte[]> AGENT_TO = agentstates.Select(v => v.Last().ToBytes()).ToList();
-            List<BigInteger> AGENT_HOLD = agentstates.Select(v => v.First().GetInteger()).ToList();
             $"AGENT_TO: {String.Join(", ", AGENT_TO.Select(v => v.ToHexString()))}".Log();
             $"AGENT_HOLD: {String.Join(", ", AGENT_HOLD)}".Log();
 
             List<BigInteger> CANDIDATE_V = CANDIDATES.Zip(CANDIDATE_VOTES).Select(v => v.Second - AGENT_TO.Zip(AGENT_HOLD).FindByOrDefault(v.First)).ToList();
-            $"CANDIDATE_V: {String.Join(", ", CANDIDATE_V)}".Log();
-
-            List<(byte[], BigInteger)> filtered = CANDIDATES.Zip(CANDIDATE_V).ToList();
-            filtered.SortBy(v => v.Item2);
-
-            List<byte[]> ELECTEDS = filtered.TakeLast(21).Select(v => v.Item1).ToList();
-            $"ELECTEDS: {String.Join(", ", ELECTEDS.Select(v => v.ToHexString()))}".Log();
-
+            List<byte[]> ELECTEDS = CANDIDATES.Zip(CANDIDATE_V).OrderBy(v => v.Second).TakeLast(21).Select(v => v.Item1).ToList();
             List<byte[]> CNS = ELECTEDS.TakeLast(7).ToList();
             List<byte[]> CMS = ELECTEDS.Take(14).ToList();
+            $"CANDIDATE_V: {String.Join(", ", CANDIDATE_V)}".Log();
+            $"ELECTEDS: {String.Join(", ", ELECTEDS.Select(v => v.ToHexString()))}".Log();
+
+
             List<BigInteger> ELECTED_K = ELECTEDS.Select(v => CNS.HasBytes(v) ? 200000000 * BigInteger.One : 100000000 * BigInteger.One).ToList();
             List<BigInteger> CM_V = CMS.Select(v => CANDIDATES.Zip(CANDIDATE_V).FindBy(v)).ToList();
             $"CNS: {String.Join(", ", CNS.Select(v => v.ToHexString()))}".Log();
