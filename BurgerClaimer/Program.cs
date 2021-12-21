@@ -34,7 +34,7 @@ namespace BurgerClaimer
             List<byte[]> CLAIM = AGENTS.Zip(MERGED).Where(v => v.Second > THREASHOLD).Select(v => v.First.MakeScript("claim")).ToList();
             $"SYNC: {String.Join(", ", SYNC.Select(v => v.ToHexString()))}".Log();
             $"CLAIM: {String.Join(", ", CLAIM.Select(v => v.ToHexString()))}".Log();
-            SYNC.Concat(CLAIM).SelectMany(v => v).ToArray()?.SendTx().Out();
+            SYNC.Concat(CLAIM).SelectMany(v => v).Nullize()?.ToArray().SendTx().Out();
         }
     }
 }
