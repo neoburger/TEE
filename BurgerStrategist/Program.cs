@@ -33,12 +33,11 @@ namespace BurgerStrategist
             List<byte[]> CMS = ELECTEDS.Take(14).ToList();
             $"CANDIDATE_V: {String.Join(", ", CANDIDATE_V)}".Log();
             $"ELECTEDS: {String.Join(", ", ELECTEDS.Select(v => v.ToHexString()))}".Log();
-
+            $"CNS: {String.Join(", ", CNS.Select(v => v.ToHexString()))}".Log();
+            $"CMS: {String.Join(", ", CMS.Select(v => v.ToHexString()))}".Log();
 
             List<BigInteger> ELECTED_K = ELECTEDS.Select(v => CNS.HasBytes(v) ? 200000000 * BigInteger.One : 100000000 * BigInteger.One).ToList();
             List<BigInteger> CM_V = CMS.Select(v => CANDIDATES.Zip(CANDIDATE_V).FindBy(v)).ToList();
-            $"CNS: {String.Join(", ", CNS.Select(v => v.ToHexString()))}".Log();
-            $"CMS: {String.Join(", ", CMS.Select(v => v.ToHexString()))}".Log();
             $"CM_V: {String.Join(", ", CM_V)}".Log();
 
             // TODO: FIX
