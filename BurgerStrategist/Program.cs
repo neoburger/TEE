@@ -110,5 +110,11 @@ namespace BurgerStrategist
 
             SCRIPTVOTES.Concat(SCRIPTTRANSFERS).SelectMany(a => a).ToArray().SendTx().Out();
         }
+
+        static List<BigInteger> Solve(List<BigInteger> K, List<BigInteger> V, BigInteger N)
+        {
+            // TODO
+            return null;
+        }
     }
 }
