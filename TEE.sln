@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibHelper", "LibHelper\LibH
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BurgerStrategist", "BurgerStrategist\BurgerStrategist.csproj", "{2131852A-C9F7-46BE-BA1E-928A12F59031}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BurgerClaimer", "BurgerClaimer\BurgerClaimer.csproj", "{B12DD848-81E9-4C17-B899-85B36C22DB85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,5 +88,17 @@ Global
 		{2131852A-C9F7-46BE-BA1E-928A12F59031}.Release|x64.Build.0 = Release|Any CPU
 		{2131852A-C9F7-46BE-BA1E-928A12F59031}.Release|x86.ActiveCfg = Release|Any CPU
 		{2131852A-C9F7-46BE-BA1E-928A12F59031}.Release|x86.Build.0 = Release|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Debug|x64.Build.0 = Debug|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Debug|x86.Build.0 = Debug|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Release|x64.ActiveCfg = Release|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Release|x64.Build.0 = Release|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Release|x86.ActiveCfg = Release|Any CPU
+		{B12DD848-81E9-4C17-B899-85B36C22DB85}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
