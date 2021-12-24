@@ -76,10 +76,7 @@ namespace BurgerStrategist
             List<BigInteger> AGENT_DIFF = AGENT_HOLDN.Zip(AGENT_HOLD).Select(v => v.First - v.Second).ToList();
             $"AGENT_DIFF: {String.Join(", ", AGENT_DIFF)}".Log();
 
-            List<(BigInteger, int)> diff = AGENT_DIFF.Select((v, i) => (v, i)).Where(v => v.Item1.IsZero == false).ToList();
-            diff.Sort();
-            List<int> TRANSFERS = diff.Select(v => v.Item2).ToList();
-            List<BigInteger> TRANSFER_AMOUNT = diff.Select(v => v.Item1).ToList();
+            (List<int> TRANSFERS, List<BigInteger> TRANSFER_AMOUNT) = AGENT_DIFF.Select((v, i) => (v, i)).Where(v => v.v.IsZero == false).OrderBy(v => v.v).Map2(v => v.i, v => v.v);
             $"TRANSFERS: {String.Join(", ", TRANSFERS)}".Log();
             $"TRANSFER_AMOUNT: {String.Join(", ", TRANSFER_AMOUNT)}".Log();
 
