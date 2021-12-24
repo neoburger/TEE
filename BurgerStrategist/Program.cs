@@ -111,7 +111,6 @@ namespace BurgerStrategist
             $"HOLD: {String.Join(", ", HOLD)}".Log();
 
             List<BigInteger> FLAG = HOLD.Select(v => v < 1 ? BigInteger.One : BigInteger.Zero).ToList();
-
             return FLAG.Sum() == 0 ? HOLD : FLAG.Merge(Solve(K.Zip(HOLD).Where(v => v.Second > 0).Select(v => v.First).ToList(), V.Zip(HOLD).Where(v => v.Second > 0).Select(v => v.First).ToList(), N - FLAG.Sum()), v => v == BigInteger.Zero).ToList();
         }
     }
