@@ -64,8 +64,8 @@ namespace BurgerStrategist
                 return;
             }
 
-            Queue<byte[]> changes = new(SELECTS.Where(v => AGENT_TO.HasBytes(v) == false));
-            List<byte[]> AGENT_TON = AGENT_TO.Select(v => SELECTS.HasBytes(v) ? v : changes.Dequeue()).ToList();
+            List<byte[]> AGENT_TON = AGENT_TO.Merge(SELECTS.Where(v => !AGENT_TO.HasBytes(v)), v => !SELECTS.HasBytes(v)).ToList();
+            $"AGENT_TON: {String.Join(", ", AGENT_TON.Select(v => v.ToHexString()))}".Log();
 
             List<byte[]> SCRIPTVOTES = AGENT_TON.Zip(AGENT_TO).Where(v => v.First.SequenceEqual(v.Second) == false).Select(v => BNEO.MakeScript("trigVote", AGENT_TON.IndexOf(v.First), v.First)).ToList();
             $"SCRIPTVOTES: {String.Join(", ", SCRIPTVOTES.Select(v => v.ToHexString()))}".Log();
