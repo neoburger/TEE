@@ -112,9 +112,7 @@ namespace BurgerStrategist
 
             List<BigInteger> FLAG = HOLD.Select(v => v < 1 ? BigInteger.One : BigInteger.Zero).ToList();
 
-            if (FLAG.Sum() == 0) return HOLD;
-            Queue<BigInteger> QUEUE = new(Solve(K.Zip(HOLD).Where(v => v.Second > 0).Select(v => v.First).ToList(), V.Zip(HOLD).Where(v => v.Second > 0).Select(v => v.First).ToList(), N - FLAG.Sum()));
-            return FLAG.Select(v => v == BigInteger.One ? v : QUEUE.Dequeue()).ToList();
+            return FLAG.Sum() == 0 ? HOLD : FLAG.Merge(Solve(K.Zip(HOLD).Where(v => v.Second > 0).Select(v => v.First).ToList(), V.Zip(HOLD).Where(v => v.Second > 0).Select(v => v.First).ToList(), N - FLAG.Sum()), v => v == BigInteger.Zero).ToList();
         }
     }
 }

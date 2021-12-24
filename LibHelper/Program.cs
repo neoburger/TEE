@@ -13,7 +13,10 @@ namespace LibHelper
         public static bool HasBytes(this IEnumerable<byte[]> list, byte[] val) => list.Where(v => v.SequenceEqual(val)).Any();
         public static T FindBy<T>(this IEnumerable<(byte[], T)> list, byte[] val) => list.Where(v => v.Item1.SequenceEqual(val)).Single().Item2;
         public static T FindByOrDefault<T>(this IEnumerable<(byte[], T)> list, byte[] val) => list.Where(v => v.Item1.SequenceEqual(val)).SingleOrDefault().Item2;
-        public static void SortBy<T>(this List<T> list, Func<T, IComparable> f) => list.Sort((x, y) => f(x).CompareTo(f(y)));
+        public static IEnumerable<T> Merge<T>(this IEnumerable<T> list, IEnumerable<T> other) => list.Merge(new Queue<T>(other), v => v is null);
+        public static IEnumerable<T> Merge<T>(this IEnumerable<T> list, IEnumerable<T> other, Func<T, bool> f) => list.Merge(new Queue<T>(other), f);
+        public static IEnumerable<T> Merge<T>(this IEnumerable<T> list, Queue<T> other, Func<T, bool> f) => list.Select(v => f(v) ? other.Dequeue() : v);
+
         public static void Log<T>(this T val) => Console.Error.WriteLine(val);
         public static void Out<T>(this T val) => Console.WriteLine(val);
         public static UInt160 ToU160(this StackItem val) => new UInt160(val.GetSpan());
