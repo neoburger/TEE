@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -112,8 +113,25 @@ namespace BurgerStrategist
 
         static List<BigInteger> Solve(List<BigInteger> K, List<BigInteger> V, BigInteger N)
         {
-            // TODO
-            return null;
+            List<double> T = K.Zip(V).Select(v => Math.Sqrt((double)(v.First * v.Second))).ToList();
+            $"T: {String.Join(", ", T)}".Log();
+
+            double U = (double)(N + V.Sum()) / T.Sum();
+            $"U: {U}".Log();
+
+            List<BigInteger> VOTES = T.Select(v => v * U).Select(v => (BigInteger)v).ToList();
+            $"VOTES: {String.Join(", ", VOTES)}".Log();
+
+            List<BigInteger> HOLD = VOTES.Zip(V).Select(v => v.First - v.Second).ToList();
+            HOLD[0] += N - HOLD.Sum();
+            $"HOLD: {String.Join(", ", HOLD)}".Log();
+
+            List<BigInteger> FLAG = HOLD.Select(v => v < 1 ? BigInteger.One : BigInteger.Zero).ToList();
+
+            if (FLAG.Sum() == 0) return HOLD;
+            Queue<BigInteger> QUEUE = new(Solve(K.Zip(HOLD).Where(v => v.Second > 0).Select(v => v.First).ToList(), V.Zip(HOLD).Where(v => v.Second > 0).Select(v => v.First).ToList(), N - FLAG.Sum()));
+
+            return FLAG.Select(v => v == BigInteger.One ? v : QUEUE.Dequeue()).ToList();
         }
     }
 }
