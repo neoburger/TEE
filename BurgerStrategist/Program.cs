@@ -51,24 +51,8 @@ namespace BurgerStrategist
             $"SELECT_K: {String.Join(", ", SELECT_K)}".Log();
             $"SELECT_V: {String.Join(", ", SELECT_V)}".Log();
 
-            BigInteger N = AGENT_HOLD.Sum() + SELECT_V.Sum();
-            $"N: {N}".Log();
-
-            List<double> SELECT_T = SELECT_K.Zip(SELECT_V).Select(v => Math.Sqrt((double)(v.First * v.Second))).ToList();
-            $"SELECT_T: {String.Join(", ", SELECT_T)}".Log();
-
-
-            double U = (double)N / SELECT_T.Sum();
-            $"U: {U}".Log();
-
-            List<BigInteger> SELECT_VOTES = SELECT_T.Select(v => v * U).Select(v => (BigInteger)v).ToList();
-            $"SELECT_VOTES: {String.Join(", ", SELECT_VOTES)}".Log();
-
-
-            List<BigInteger> SELECT_HOLD = SELECT_VOTES.Zip(SELECT_V).Select(v => v.First - v.Second).ToList();
-            SELECT_HOLD[0] += AGENT_HOLD.Sum() - SELECT_HOLD.Sum();
-            $"SELECT_HOLD: {String.Join(", ", SELECT_HOLD)}".Log();
-            SELECT_HOLD.ForEach(v => { if (v < 0) throw new Exception(); });
+            List<BigInteger> SELECT_HOLD = Solve(SELECT_K, SELECT_V, AGENT_HOLD.Sum());
+            $"FINAL SELECT_HOLD: {String.Join(", ", SELECT_HOLD)}".Log();
 
             BigInteger SCORE0 = AGENT_TO.Zip(AGENT_HOLD).Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v.First) * v.Second / (v.Second + CANDIDATES.Zip(CANDIDATE_V).FindBy(v.First))).Sum();
             BigInteger SCORE = SELECTS.Zip(SELECT_HOLD).Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v.First) * v.Second / (v.Second + CANDIDATES.Zip(CANDIDATE_V).FindBy(v.First))).Sum();
@@ -130,7 +114,6 @@ namespace BurgerStrategist
 
             if (FLAG.Sum() == 0) return HOLD;
             Queue<BigInteger> QUEUE = new(Solve(K.Zip(HOLD).Where(v => v.Second > 0).Select(v => v.First).ToList(), V.Zip(HOLD).Where(v => v.Second > 0).Select(v => v.First).ToList(), N - FLAG.Sum()));
-
             return FLAG.Select(v => v == BigInteger.One ? v : QUEUE.Dequeue()).ToList();
         }
     }
