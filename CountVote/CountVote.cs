@@ -47,7 +47,7 @@ public class CountVote : Plugin, IPersistencePlugin
         catch (Exception ex)
         {
             Console.Error.WriteLine("Error");
-            Console.Error.WriteLine(ex.Message);
+            Console.Error.WriteLine(ex.ToString());
         }
         //throw new Exception("abort");
     }
