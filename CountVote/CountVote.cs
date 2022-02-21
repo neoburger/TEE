@@ -24,22 +24,31 @@ public class CountVote : Plugin, IPersistencePlugin
     private static readonly UInt160 DAO = UInt160.Parse("0x54806765d451e2b0425072730d527d05fbfa9817");
     void IPersistencePlugin.OnPersist(NeoSystem system, Block block, DataCache snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
     {
-        if (block.Index % COUNT_VOTE_EVERY_BLOCKS != 0) { return; }
-        if (COUNT_VOTE_SINCE_BLOCK > block.Index) { return; }
-        if (block.Timestamp > COUNT_VOTE_UNTIL_TIME)
+        try
         {
-            Console.WriteLine($"End counting at block index {block.Index}");
-            Environment.Exit(0);
+            Console.Error.WriteLine($"Block {block.Index}");
+            if (block.Index % COUNT_VOTE_EVERY_BLOCKS != 0) { return; }
+            if (COUNT_VOTE_SINCE_BLOCK > block.Index) { return; }
+            if (block.Timestamp > COUNT_VOTE_UNTIL_TIME)
+            {
+                Console.Error.WriteLine($"End counting at block index {block.Index}");
+                Environment.Exit(0);
+            }
+            Dictionary<string, object> fullResult = AnalyzeVoteFilesOfBranch(system, snapshot, path: REPOSITORY_LOCAL_PATH);
+            BigInteger totalSupply = ApplicationEngine.Run(DAO.MakeScript("totalSupply", new object[] { }), snapshot, settings: system.Settings).ResultStack.Select(v => v.GetInteger()).First();
+            if ((BigInteger)fullResult["totalVote"] * 10 > totalSupply)
+            {
+                fullResult["passed"] = true;
+            }
+            string jsonString = JsonConvert.SerializeObject(fullResult);
+            File.WriteAllText("_result.json", jsonString);
+            Console.Error.WriteLine($"Block{block.Index}:NBIP-{NBIP_ID}:{fullResult["totalVote"]}/{totalSupply}");
         }
-        Dictionary<string, object> fullResult = AnalyzeVoteFilesOfBranch(system, snapshot, path: REPOSITORY_LOCAL_PATH);
-        BigInteger totalSupply = ApplicationEngine.Run(DAO.MakeScript("totalSupply", new object[] { }), snapshot, settings: system.Settings).ResultStack.Select(v => v.GetInteger()).First();
-        if ((BigInteger)fullResult["totalVote"] * 10 > totalSupply )
+        catch (Exception ex)
         {
-            fullResult["passed"] = true;
+            Console.Error.WriteLine("Error");
+            Console.Error.WriteLine(ex.Message);
         }
-        string jsonString = JsonConvert.SerializeObject(fullResult);
-        File.WriteAllText("_result.json", jsonString);
-        Console.WriteLine($"Block{block.Index}:NBIP-{NBIP_ID}:{fullResult["totalVote"]}/{totalSupply}");
         //throw new Exception("abort");
     }
 
@@ -109,9 +118,9 @@ public class CountVote : Plugin, IPersistencePlugin
         }
         catch (Exception ex)
         {
-            Console.WriteLine(path, filename);
-            Console.WriteLine(text);
-            Console.WriteLine(ex);
+            Console.Error.WriteLine(path, filename);
+            Console.Error.WriteLine(text);
+            Console.Error.WriteLine(ex);
             return new Tuple<UInt160, bool>(UInt160.Zero, false);
         }
     }
