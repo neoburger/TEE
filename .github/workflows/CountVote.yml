@@ -58,7 +58,6 @@ jobs:
     - name: Clone CountVote
       uses: actions/checkout@v2
       with:
-        repository: Hecate2/TEE  # Change this for production!
         ref: CountVote
         path: .TEE
     - name: Setup .NET
@@ -104,10 +103,11 @@ jobs:
     - name: Save
       run: |
         mv -u .node/neo-cli/bin/Release/net6.0/_result.json result.json
+        cat result.json
         echo ".*" > .gitignore
         git config --global user.email "neoburger@neoburger.io"
         git config --global user.name "neoburgerCountVote"
         git add .
-        git commit -m release
+        git commit -m CountVote
         git push
     
