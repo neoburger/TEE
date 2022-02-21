@@ -32,6 +32,7 @@ jobs:
     - name: Clone NBIP Branch
       uses: actions/checkout@v2
       with: 
+        repository: vang1ong7ang/NBIP
         ref: ${{ env.NBIP_BRANCH }}
     - name: Set Custom Branch
       if: github.event.inputs.DATA_BRANCH != ''
