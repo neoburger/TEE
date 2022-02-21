@@ -1,0 +1,111 @@
+name: run
+
+on:
+  workflow_dispatch:
+    inputs:
+      NBIP_ID:
+        description: "NBIP_ID; single integer, e.g. 1"
+        required: true
+      COUNT_VOTE_SINCE_BLOCK:
+        description: "count vote since block index; single integer, e.g. 1109604"
+        required: false
+        default: "1110000"
+      COUNT_VOTE_UNTIL_TIME:
+        description: "count vote until timestamp (milliseconds); single ulong, e.g. 1645427304803"
+        required: false
+        default: ""
+      COUNT_VOTE_EVERY_BLOCKS:
+        description: "count vote every how many blocks; single integer, e.g. 21"
+        required: false
+        default: "1"
+      DATA_BRANCH:
+        description: "which branch to clone from statistics repository serving as blockchain data"
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DATA_BRANCH: data
+      NBIP_BRANCH: NBIP-${{ github.event.inputs.DATA_BRANCH }}
+    steps:
+    - name: Clone NBIP Branch
+      uses: actions/checkout@v2
+      with: 
+        ref: ${{ env.NBIP_BRANCH }}
+    - name: Set Custom Branch
+      if: github.event.inputs.DATA_BRANCH != ''
+      run: echo "BRANCH=${{ github.event.inputs.DATA_BRANCH }}" >> $GITHUB_ENV
+    - name: Clone Statistics Data
+      uses: actions/checkout@v2
+      with:
+        repository: neoburger/statistics
+        ref: ${{ env.DATA_BRANCH }}
+        path: .statistics
+    - name: Clone Neo Node
+      uses: actions/checkout@v2
+      with:
+        repository: neo-project/neo-node
+        ref: v3.1.0
+        path: .node
+    - name: Clone Neo Modules
+      uses: actions/checkout@v2
+      with:
+        repository: neo-project/neo-modules
+        ref: v3.1.0
+        path: .modules
+    - name: Clone CountVote
+      uses: actions/checkout@v2
+      with:
+        repository: neoburger/TEE
+        ref: main
+        path: .TEE
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+        include-prerelease: true
+    - name: Install Libraries
+      run: sudo apt-get install -y libleveldb-dev sqlite3 libsqlite3-dev libunwind8-dev
+    - name: Restore Neo Node
+      run: cd .node/neo-cli && dotnet restore
+    - name: Restore Neo Modules
+      run: cd .modules/src/LevelDBStore && dotnet restore
+    - name: Restore CountVote Plugin
+      run: cd .TEE/CountVote && dotnet restore
+    - name: Build Neo Node
+      run: cd .node/neo-cli && dotnet publish -c Release
+    - name: Build Neo Modules
+      run: cd .modules/src/LevelDBStore && dotnet publish -c Release
+    - name: Build CountVote Plugin
+      run: |
+        cd .TEE/CountVote
+        dotnet publish -c Release
+    - name: Install Plugins
+      run: |
+        mkdir -p .node/neo-cli/bin/Release/net6.0/Plugins
+        cp .modules/src/LevelDBStore/bin/Release/net6.0/LevelDBStore.dll .node/neo-cli/bin/Release/net6.0/Plugins/
+        cp .TEE/CountVote/bin/Release/net6.0/CountVote.dll .node/neo-cli/bin/Release/net6.0/Plugins/
+    - name: Move Chain Data
+      run: |
+        mv .statistics/Data_LevelDB_* .node/neo-cli/bin/Release/net6.0/
+    - name: Run
+      env:
+        NBIP_ID: ${{ github.event.inputs.NBIP_ID }}
+        COUNT_VOTE_SINCE_BLOCK: ${{ github.event.inputs.COUNT_VOTE_SINCE_BLOCK }}
+        COUNT_VOTE_UNTIL_TIME: ${{ github.event.inputs.COUNT_VOTE_UNTIL_TIME }}
+        COUNT_VOTE_EVERY_BLOCKS: ${{ github.event.inputs.COUNT_VOTE_EVERY_BLOCKS }}
+      run: |
+        cd .node/neo-cli/bin/Release/net6.0
+        mkfifo .tmp
+        cat .tmp | (dotnet neo-cli.dll && echo > .tmp)
+    - name: Save
+      run: |
+        mv -u .node/neo-cli/bin/Release/net6.0/_result.json result.json
+        echo ".*" > .gitignore
+        git config --global user.email "neoburger@neoburger.io"
+        git config --global user.name "neoburgerCountVote"
+        git add .
+        git commit -m release
+        git push
+    
