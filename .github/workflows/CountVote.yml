@@ -58,8 +58,8 @@ jobs:
     - name: Clone CountVote
       uses: actions/checkout@v2
       with:
-        repository: neoburger/TEE
-        ref: main
+        repository: Hecate2/TEE  # Change this for production!
+        ref: CountVote
         path: .TEE
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
@@ -96,6 +96,7 @@ jobs:
         COUNT_VOTE_SINCE_BLOCK: ${{ github.event.inputs.COUNT_VOTE_SINCE_BLOCK }}
         COUNT_VOTE_UNTIL_TIME: ${{ github.event.inputs.COUNT_VOTE_UNTIL_TIME }}
         COUNT_VOTE_EVERY_BLOCKS: ${{ github.event.inputs.COUNT_VOTE_EVERY_BLOCKS }}
+        REPOSITORY_LOCAL_PATH: "."
       run: |
         cd .node/neo-cli/bin/Release/net6.0
         mkfifo .tmp
