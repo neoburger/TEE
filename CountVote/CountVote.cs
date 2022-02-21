@@ -19,7 +19,7 @@ public class CountVote : Plugin, IPersistencePlugin
     private static readonly long NBIP_ID = long.TryParse(Environment.GetEnvironmentVariable("NBIP_ID"), out NBIP_ID) ? NBIP_ID : throw new Exception("No NBIP_ID in environment variable");
     private static readonly ulong COUNT_VOTE_SINCE_BLOCK = ulong.TryParse(Environment.GetEnvironmentVariable("COUNT_VOTE_SINCE_BLOCK"), out COUNT_VOTE_SINCE_BLOCK) ? COUNT_VOTE_SINCE_BLOCK : 0;
     private static readonly ulong COUNT_VOTE_UNTIL_TIME = ulong.TryParse(Environment.GetEnvironmentVariable("COUNT_VOTE_UNTIL_TIME"), out COUNT_VOTE_UNTIL_TIME) ? COUNT_VOTE_UNTIL_TIME : TimeProvider.Current.UtcNow.ToTimestampMS();
-    private static readonly uint COUNT_VOTE_EVERY_BLOCKS = uint.TryParse(Environment.GetEnvironmentVariable("COUNT_VOTE_EVERY_BLOCKS"), out COUNT_VOTE_EVERY_BLOCKS) ? COUNT_VOTE_EVERY_BLOCKS : 21;
+    private static readonly uint COUNT_VOTE_EVERY_BLOCKS = uint.TryParse(Environment.GetEnvironmentVariable("COUNT_VOTE_EVERY_BLOCKS"), out COUNT_VOTE_EVERY_BLOCKS) ? COUNT_VOTE_EVERY_BLOCKS : 1;
     private static readonly UInt160 TEE = UInt160.Parse("0x82450b644631506b6b7194c4071d0b98d762771f");
     private static readonly UInt160 DAO = UInt160.Parse("0x54806765d451e2b0425072730d527d05fbfa9817");
     void IPersistencePlugin.OnPersist(NeoSystem system, Block block, DataCache snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
@@ -28,7 +28,8 @@ public class CountVote : Plugin, IPersistencePlugin
         if (COUNT_VOTE_SINCE_BLOCK > block.Index) { return; }
         if (block.Timestamp > COUNT_VOTE_UNTIL_TIME)
         {
-            throw new Exception($"current block time {block.Timestamp} > COUNT_VOTE_UNTIL_TIME {COUNT_VOTE_UNTIL_TIME}");
+            Console.WriteLine($"End counting at block index {block.Index}");
+            return;
         }
         BigInteger votes = AnalyzeVoteFilesOfBranch(system, snapshot, path: REPOSITORY_LOCAL_PATH);
         BigInteger totalSupply = ApplicationEngine.Run(DAO.MakeScript("totalSupply", new object[] { }), snapshot, settings: system.Settings).ResultStack.Select(v => v.GetInteger()).First();
