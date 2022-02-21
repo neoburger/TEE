@@ -29,10 +29,9 @@ public class CountVote : Plugin, IPersistencePlugin
         {
             throw new Exception($"COUNT_VOTE_SINCE_BLOCK {COUNT_VOTE_SINCE_BLOCK} > block.Index {block.Index}");
         }
-        ulong currentTime = TimeProvider.Current.UtcNow.ToTimestampMS();
-        if (currentTime > COUNT_VOTE_UNTIL_TIME)
+        if (block.Timestamp > COUNT_VOTE_UNTIL_TIME)
         {
-            throw new Exception($"current time {currentTime} > COUNT_VOTE_UNTIL_TIME {COUNT_VOTE_UNTIL_TIME}");
+            throw new Exception($"current block time {block.Timestamp} > COUNT_VOTE_UNTIL_TIME {COUNT_VOTE_UNTIL_TIME}");
         }
         BigInteger votes = AnalyzeVoteFilesOfBranch(system, snapshot, path: REPOSITORY_LOCAL_PATH);
         BigInteger totalSupply = ApplicationEngine.Run(DAO.MakeScript("totalSupply", new object[] { }), snapshot, settings: system.Settings).ResultStack.Select(v => v.GetInteger()).First();
