@@ -58,7 +58,6 @@ jobs:
     - name: Clone CountVote
       uses: actions/checkout@v2
       with:
-        ref: CountVote
         path: .TEE
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
