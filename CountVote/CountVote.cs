@@ -29,21 +29,34 @@ public class CountVote : Plugin, IPersistencePlugin
         if (block.Timestamp > COUNT_VOTE_UNTIL_TIME)
         {
             Console.WriteLine($"End counting at block index {block.Index}");
-            return;
+            Environment.Exit(0);
         }
-        BigInteger votes = AnalyzeVoteFilesOfBranch(system, snapshot, path: REPOSITORY_LOCAL_PATH);
+        Dictionary<string, object> fullResult = AnalyzeVoteFilesOfBranch(system, snapshot, path: REPOSITORY_LOCAL_PATH);
         BigInteger totalSupply = ApplicationEngine.Run(DAO.MakeScript("totalSupply", new object[] { }), snapshot, settings: system.Settings).ResultStack.Select(v => v.GetInteger()).First();
-        Console.WriteLine($"Block{block.Index}:NBIP-{NBIP_ID}:{votes}/{totalSupply}");
+        if ((BigInteger)fullResult["totalVote"] * 10 > totalSupply )
+        {
+            fullResult["passed"] = true;
+        }
+        string jsonString = JsonConvert.SerializeObject(fullResult);
+        File.WriteAllText("_result.json", jsonString);
+        Console.WriteLine($"Block{block.Index}:NBIP-{NBIP_ID}:{fullResult["totalVote"]}/{totalSupply}");
         //throw new Exception("abort");
     }
 
-    BigInteger AnalyzeVoteFilesOfBranch(NeoSystem system, DataCache snapshot, string path = "")
+    Dictionary<string, object> AnalyzeVoteFilesOfBranch(NeoSystem system, DataCache snapshot, string path = "")
     {
         
         if (path == "") { path = REPOSITORY_LOCAL_PATH; }
         UInt160 voter;
         bool forOrAgainst;
         BigInteger totalVote = 0;
+        BigInteger yes = 0, no = 0;
+        Dictionary<string, object> fullResult = new();
+        fullResult["timestamp"] = TimeProvider.Current.UtcNow.ToTimestampMS();
+        fullResult["totalVote"] = 0;
+        fullResult["passed"] = false;
+        fullResult["yes"] = 0;
+        fullResult["no"] = 0;
         foreach (string fileFullPath in Directory.GetFiles(path, "0x*.json"))
         {
             string filename = System.IO.Path.GetFileName(fileFullPath);
@@ -54,11 +67,13 @@ public class CountVote : Plugin, IPersistencePlugin
                 if (voter == UInt160.Zero) { continue; }
                 ApplicationEngine balanceOfVoterRun = ApplicationEngine.Run(DAO.MakeScript("balanceOf", new object[] { voter }), snapshot, settings: system.Settings);
                 BigInteger balanceOfVoter = balanceOfVoterRun.ResultStack.Select(v => v.GetInteger()).First();
-                if (forOrAgainst) { totalVote += balanceOfVoter; }
-                else { totalVote -= balanceOfVoter; }
+                if (forOrAgainst) { totalVote += balanceOfVoter; yes += 1; }
+                else { totalVote -= balanceOfVoter; no += 1; }
             }
         }
-        return totalVote;
+        fullResult["totalVote"] = totalVote;
+        fullResult["yes"] = yes; fullResult["no"] = no;
+        return fullResult;
     }
 
     Tuple<UInt160, bool> VerifyVoteFile(string filename, string path = "")
