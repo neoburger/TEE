@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATA_BRANCH: data
-      NBIP_BRANCH: NBIP-${{ github.event.inputs.DATA_BRANCH }}
+      NBIP_BRANCH: NBIP-${{ github.event.inputs.NBIP_ID }}
     steps:
     - name: Clone NBIP Branch
       uses: actions/checkout@v2
