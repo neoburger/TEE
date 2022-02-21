@@ -18,7 +18,7 @@ public class CountVote : Plugin, IPersistencePlugin
     // long NBIP_ID instead of ulong, because C# parses integers in json as long
     private static readonly long NBIP_ID = long.TryParse(Environment.GetEnvironmentVariable("NBIP_ID"), out NBIP_ID) ? NBIP_ID : throw new Exception("No NBIP_ID in environment variable");
     private static readonly ulong COUNT_VOTE_SINCE_BLOCK = ulong.TryParse(Environment.GetEnvironmentVariable("COUNT_VOTE_SINCE_BLOCK"), out COUNT_VOTE_SINCE_BLOCK) ? COUNT_VOTE_SINCE_BLOCK : 0;
-    private static readonly ulong COUNT_VOTE_UNTIL_TIME = ulong.TryParse(Environment.GetEnvironmentVariable("COUNT_VOTE_UNTIL_TIME"), out COUNT_VOTE_UNTIL_TIME) ? COUNT_VOTE_UNTIL_TIME : 99999999999990;
+    private static readonly ulong COUNT_VOTE_UNTIL_TIME = ulong.TryParse(Environment.GetEnvironmentVariable("COUNT_VOTE_UNTIL_TIME"), out COUNT_VOTE_UNTIL_TIME) ? COUNT_VOTE_UNTIL_TIME : TimeProvider.Current.UtcNow.ToTimestampMS();;
     private static readonly uint COUNT_VOTE_EVERY_BLOCKS = uint.TryParse(Environment.GetEnvironmentVariable("COUNT_VOTE_EVERY_BLOCKS"), out COUNT_VOTE_EVERY_BLOCKS) ? COUNT_VOTE_EVERY_BLOCKS : 21;
     private static readonly UInt160 TEE = UInt160.Parse("0x82450b644631506b6b7194c4071d0b98d762771f");
     private static readonly UInt160 DAO = UInt160.Parse("0x54806765d451e2b0425072730d527d05fbfa9817");
