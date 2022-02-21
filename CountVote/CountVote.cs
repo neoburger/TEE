@@ -25,10 +25,7 @@ public class CountVote : Plugin, IPersistencePlugin
     void IPersistencePlugin.OnPersist(NeoSystem system, Block block, DataCache snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
     {
         if (block.Index % COUNT_VOTE_EVERY_BLOCKS != 0) { return; }
-        if (COUNT_VOTE_SINCE_BLOCK > block.Index)
-        {
-            throw new Exception($"COUNT_VOTE_SINCE_BLOCK {COUNT_VOTE_SINCE_BLOCK} > block.Index {block.Index}");
-        }
+        if (COUNT_VOTE_SINCE_BLOCK > block.Index) { return; }
         if (block.Timestamp > COUNT_VOTE_UNTIL_TIME)
         {
             throw new Exception($"current block time {block.Timestamp} > COUNT_VOTE_UNTIL_TIME {COUNT_VOTE_UNTIL_TIME}");
