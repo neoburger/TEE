@@ -32,8 +32,12 @@ jobs:
     - name: Clone NBIP Branch
       uses: actions/checkout@v2
       with: 
-        repository: vang1ong7ang/NBIP
+        repository: ${{github.actor}}/NBIP
         ref: ${{ env.NBIP_BRANCH }}
+        fetch-depth: 0
+    - name: list files
+      run: |
+        ls -R
     - name: Set Custom Branch
       if: github.event.inputs.DATA_BRANCH != ''
       run: echo "BRANCH=${{ github.event.inputs.DATA_BRANCH }}" >> $GITHUB_ENV
@@ -58,6 +62,7 @@ jobs:
     - name: Clone CountVote
       uses: actions/checkout@v2
       with:
+        ref: CountVote
         path: .TEE
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
@@ -94,7 +99,7 @@ jobs:
         COUNT_VOTE_SINCE_BLOCK: ${{ github.event.inputs.COUNT_VOTE_SINCE_BLOCK }}
         COUNT_VOTE_UNTIL_TIME: ${{ github.event.inputs.COUNT_VOTE_UNTIL_TIME }}
         COUNT_VOTE_EVERY_BLOCKS: ${{ github.event.inputs.COUNT_VOTE_EVERY_BLOCKS }}
-        REPOSITORY_LOCAL_PATH: "."
+        REPOSITORY_LOCAL_PATH: /home/runner/work/TEE/TEE
       run: |
         cd .node/neo-cli/bin/Release/net6.0
         mkfifo .tmp
@@ -108,5 +113,6 @@ jobs:
         git config --global user.name "neoburgerCountVote"
         git add .
         git commit -m CountVote
-        git push
+        git config -l | grep 'http\..*\.extraheader' | cut -d= -f1 | xargs -L1 git config --unset-all
+        git push --prune https://${{github.actor}}:${{secrets.PUSH_TOKEN}}@github.com/${{github.actor}}/NBIP.git NBIP-${{ github.event.inputs.NBIP_ID }}
     
