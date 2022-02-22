@@ -69,6 +69,7 @@ public class CountVote : Plugin, IPersistencePlugin
         foreach (string fileFullPath in Directory.GetFiles(path, "0x*.json"))
         {
             string filename = System.IO.Path.GetFileName(fileFullPath);
+            Console.Error.WriteLine(filename);
             if (filename.StartsWith("0x") && filename.EndsWith(".json") && filename.Length == 47)
             {
                 Tuple<UInt160, bool> result = VerifyVoteFile(filename, path: System.IO.Path.GetDirectoryName(fileFullPath)??"");
@@ -76,6 +77,7 @@ public class CountVote : Plugin, IPersistencePlugin
                 if (voter == UInt160.Zero) { continue; }
                 ApplicationEngine balanceOfVoterRun = ApplicationEngine.Run(DAO.MakeScript("balanceOf", new object[] { voter }), snapshot, settings: system.Settings);
                 BigInteger balanceOfVoter = balanceOfVoterRun.ResultStack.Select(v => v.GetInteger()).First();
+                Console.Error.WriteLine(forOrAgainst);
                 if (forOrAgainst) { totalVote += balanceOfVoter; yes += 1; }
                 else { totalVote -= balanceOfVoter; no += 1; }
             }
