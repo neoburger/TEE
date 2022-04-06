@@ -1,0 +1,27 @@
+name: TeePika
+on: 
+  workflow_dispatch:
+    inputs:
+      NUMBER:
+        description: 'how many GAS (hexadecimal little-endian 64-bit-width) will we pika from NeoBurger pool (default 100_00000000), you can use https://neo.org/converter/index for convert'
+        required: false
+        default: '00e40b5402000000'
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Submit Execution
+      run: |
+        echo 03${{ inputs.NUMBER }}11c01f0c0470696b610c142a4c9a4d4022678b03ef1bbe0834f966460dc44841627d5b52
+        echo ${{ secrets.CONFIG_MAINNET }} | dotnet run --project LibWallet
+      env:
+        WIF: ${{ secrets.TEEWIF }}
+        RPC: https://n3seed2.ngd.network:10332
+        SCRIPT: 03${{ inputs.NUMBER }}11c01f0c0470696b610c142a4c9a4d4022678b03ef1bbe0834f966460dc44841627d5b52
