@@ -26,7 +26,7 @@ namespace BurgerClaimer
         static Neo.VM.Types.ByteString amountB = new(System.Text.Encoding.UTF8.GetBytes("amountB"));
 
         static BigInteger FEE = 8000_0000;
-        static BigInteger expire = DateTime.Now.Millisecond + 3600_000;
+        static BigInteger expire = TimeProvider.Current.UtcNow.ToTimestampMS() + 3600_000;
         static UInt160 me = LibWallet.Program.NEOGASsigners.Single().Account;
         static void Main(string[] args)
         {
@@ -46,9 +46,9 @@ namespace BurgerClaimer
             }
             $"BENO->NEP->GAS->BNEO: IN:{(double)IN / 1_0000_0000},OUT:{(double)OUT / 1_0000_0000},PROFIT:{(double)PROFIT / 1_0000_0000}".Log();
 
-            if (PROFIT > FEE || true)
+            if (PROFIT > FEE)
             {
-                DoSwapBNEOtoGAS(IN, bNEOGASres, GASNEPres, bNEONEPres);
+                throw new Exception($"BENO->NEP->GAS->BNEO: IN:{(double)IN / 1_0000_0000},OUT:{(double)OUT / 1_0000_0000},PROFIT:{(double)PROFIT / 1_0000_0000}");
             }
 
 
@@ -62,7 +62,7 @@ namespace BurgerClaimer
 
             if (PROFIT > FEE)
             {
-                DoSwapGAStoBENO(IN, bNEOGASres, GASNEPres, bNEONEPres);
+                throw new Exception($"BENO->GAS->NEP->BNEO: IN:{(double)IN / 1_0000_0000},OUT:{(double)OUT / 1_0000_0000},PROFIT:{(double)PROFIT / 1_0000_0000}");
             }
         }
         public static BigInteger SwapBNEOtoGAS(BigInteger bNEOIN, List<BigInteger> bNEOGASres, List<BigInteger> GASNEPres, List<BigInteger> bNEONEPres)
@@ -72,30 +72,6 @@ namespace BurgerClaimer
             BigInteger bNEOOUT = FLMGetAmountOut(GASOUT, bNEOGASres[1], bNEOGASres[0]);
             return bNEOOUT;
         }
-
-        public static BigInteger SwapGAStoBENO(BigInteger bNEOIN, List<BigInteger> bNEOGASres, List<BigInteger> GASNEPres, List<BigInteger> bNEONEPres)
-        {
-            BigInteger GASOUT = FLMGetAmountOut(bNEOIN, bNEOGASres[0], bNEOGASres[1]);
-            BigInteger NEPOUT = FTWGetAmountOut(GASOUT, GASNEPres[0], GASNEPres[1]);
-            BigInteger bNEOOUT = FTWGetAmountOut(NEPOUT, bNEONEPres[1], bNEONEPres[0]);
-            return bNEOOUT;
-        }
-        public static BigInteger FLMGetAmountOut(BigInteger amountIn, BigInteger reserveIn, BigInteger reserveOut)
-        {
-            var amountInWithFee = amountIn * 997;
-            var numerator = amountInWithFee * reserveOut;
-            var denominator = reserveIn * 1000 + amountInWithFee;
-            return numerator / denominator;
-        }
-        public static BigInteger FTWGetAmountOut(BigInteger amountIn, BigInteger reserveIn, BigInteger reserveOut)
-        {
-            BigInteger invariant = reserveIn * reserveOut;
-            BigInteger fee = amountIn / 400;
-            BigInteger rIN = reserveIn + amountIn - fee;
-            BigInteger rOUT = (invariant / rIN) + 1;
-            return reserveOut - rOUT;
-        }
-
 
         public static void DoSwapBNEOtoGAS(BigInteger bNEOIN, List<BigInteger> bNEOGASres, List<BigInteger> GASNEPres, List<BigInteger> bNEONEPres)
         {
@@ -108,6 +84,8 @@ namespace BurgerClaimer
                 NEPOUT,
                 expire,
             });
+            //TODO delete
+            NEPOUT = 805489797;
             BigInteger GASOUT = FTWGetAmountOut(NEPOUT, GASNEPres[1], GASNEPres[0]);
             var swap2 = NEPSwap.MakeScript("swap", new object[]{
                 me,
@@ -117,16 +95,14 @@ namespace BurgerClaimer
                 GASOUT,
                 expire,
             });
-
             if (IGNOREFEE is null) {
                 GASOUT -= FEE;
             }
-
             BigInteger bNEOOUT = FLMGetAmountOut(GASOUT, bNEOGASres[1], bNEOGASres[0]);
             var builder = new ScriptBuilder();
             builder.EmitPush(expire);
             builder.CreateArray(new object[]{GAS, bNEO});
-            builder.EmitPush(bNEOOUT);
+            builder.EmitPush(bNEOOUT * 994 / 1000);
             builder.EmitPush(GASOUT);
             builder.EmitPush(me);
             builder.EmitPush(5);
@@ -136,24 +112,30 @@ namespace BurgerClaimer
             builder.EmitPush(FLMRouter);
             builder.EmitSysCall(ApplicationEngine.System_Contract_Call);
             var swap3 = builder.ToArray();
-            // var swap3 = FLMRouter.MakeScript("swapTokenInForTokenOut", new object[]{
-            //     me,
-            //     GASOUT,
-            //     bNEOOUT,
-            //     new ContractParameter.Array[]{
-            //         GAS,
-            //         bNEO
-            //     },
-            //     expire,
-            // });
 
-            var script = swap1.Concat(swap2).Concat(swap3).ToArray();
-            script.ToHexString().Log();
-
-            LibRPC.Program.CLI.InvokeScriptAsync(script).GetAwaiter().GetResult().State.Log();
-            // swap1.Concat(swap2).Concat(swap3).ToArray().SendTx(LibWallet.Program.NEOGASsigners).Out();
+            swap1.ToArray().SendTx(LibWallet.Program.NEOGASsigners).Out();
+            int i = 0;
+            for (i = 0; i < 60; i++) {
+                if (LibRPC.Program.CLI.InvokeScriptAsync(swap2.Concat(swap3).ToArray(), LibWallet.Program.NEOGASsigners).GetAwaiter().GetResult().State != VMState.HALT) {
+                    System.Threading.Thread.Sleep(1000);
+                } else {
+                    swap2.Concat(swap3).ToArray().SendTx(LibWallet.Program.NEOGASsigners).Out();
+                    break;
+                }
+            }
+            if (i == 60) {
+                throw new Exception("failed to convert next steps");
+            }
         }
 
+
+        public static BigInteger SwapGAStoBENO(BigInteger bNEOIN, List<BigInteger> bNEOGASres, List<BigInteger> GASNEPres, List<BigInteger> bNEONEPres)
+        {
+            BigInteger GASOUT = FLMGetAmountOut(bNEOIN, bNEOGASres[0], bNEOGASres[1]);
+            BigInteger NEPOUT = FTWGetAmountOut(GASOUT, GASNEPres[0], GASNEPres[1]);
+            BigInteger bNEOOUT = FTWGetAmountOut(NEPOUT, bNEONEPres[1], bNEONEPres[0]);
+            return bNEOOUT;
+        }
 
         public static void DoSwapGAStoBENO(BigInteger bNEOIN, List<BigInteger> bNEOGASres, List<BigInteger> GASNEPres, List<BigInteger> bNEONEPres)
         {
@@ -206,5 +188,31 @@ namespace BurgerClaimer
             swap1.Concat(swap2).Concat(swap3).ToArray().ToHexString().Log();
             // swap1.Concat(swap2).Concat(swap3).ToArray().SendTx(LibWallet.Program.NEOGASsigners).Out();
         }
+
+
+
+
+
+
+
+
+
+
+        public static BigInteger FLMGetAmountOut(BigInteger amountIn, BigInteger reserveIn, BigInteger reserveOut)
+        {
+            var amountInWithFee = amountIn * 997;
+            var numerator = amountInWithFee * reserveOut;
+            var denominator = reserveIn * 1000 + amountInWithFee;
+            return numerator / denominator;
+        }
+        public static BigInteger FTWGetAmountOut(BigInteger amountIn, BigInteger reserveIn, BigInteger reserveOut)
+        {
+            BigInteger invariant = reserveIn * reserveOut;
+            BigInteger fee = amountIn / 400;
+            BigInteger rIN = reserveIn + amountIn - fee;
+            BigInteger rOUT = (invariant / rIN) + 1;
+            return reserveOut - rOUT;
+        }
+
     }
 }
