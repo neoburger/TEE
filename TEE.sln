@@ -11,10 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibRPC", "LibRPC\LibRPC.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibHelper", "LibHelper\LibHelper.csproj", "{101A84EB-EE57-455E-9209-6592DA368650}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BurgerStrategist", "BurgerStrategist\BurgerStrategist.csproj", "{2131852A-C9F7-46BE-BA1E-928A12F59031}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BurgerClaimer", "BurgerClaimer\BurgerClaimer.csproj", "{B12DD848-81E9-4C17-B899-85B36C22DB85}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
