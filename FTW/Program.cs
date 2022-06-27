@@ -25,7 +25,7 @@ namespace BurgerClaimer
         static Neo.VM.Types.ByteString amountA = new(System.Text.Encoding.UTF8.GetBytes("amountA"));
         static Neo.VM.Types.ByteString amountB = new(System.Text.Encoding.UTF8.GetBytes("amountB"));
 
-        static BigInteger FEE = 8000_0000;
+        static BigInteger FEE = 1000_0000;
         static BigInteger expire = TimeProvider.Current.UtcNow.ToTimestampMS() + 3600_000;
         static UInt160 me = LibWallet.Program.NEOGASsigners.Single().Account;
         static void Main(string[] args)
