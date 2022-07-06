@@ -1,9 +1,9 @@
-name: BurgerStrategist
+name: BurgerRepresentative
 on: 
   workflow_dispatch:
   
   schedule:
-  - cron: "0 0,4,8,12,16,20 * * *"
+  - cron: "0 0,6,12,18 * * *"
 jobs:
   main:
     runs-on: ubuntu-latest
@@ -15,8 +15,9 @@ jobs:
         dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Run Strategy
-      run: echo ${{ secrets.CONFIG_MAINNET }} | dotnet run --project BurgerStrategist
+    - name: Run Claimer
+      run: echo ${{ secrets.CONFIG_MAINNET }} | dotnet run --project BurgerRepresentative
       env:
-        WIF: ${{ secrets.TEEWIF }}
+        WIF: ${{ secrets.NBNODEWIF }}
         RPC: https://n3seed2.ngd.network:10332
+        THREASHOLD: 17179869184
