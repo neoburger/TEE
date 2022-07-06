@@ -21,9 +21,9 @@ namespace LibRPC
             Call(new byte[] { ((byte)OpCode.RET) });
             "OK!".Log();
         }
-        public static StackItem[] Call(this byte[] script)
+        public static StackItem[] Call(this byte[] script, Signer[] signers = null)
         {
-            RpcInvokeResult result = CLI.InvokeScriptAsync(script).GetAwaiter().GetResult();
+            RpcInvokeResult result = CLI.InvokeScriptAsync(script, signers).GetAwaiter().GetResult();
             if (result.State != VMState.HALT)
             {
                 throw new Exception();
