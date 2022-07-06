@@ -19,7 +19,7 @@ namespace BurgerClaimer
         {
             UInt160 BNEO = UInt160.Parse("0x48c40d4666f93408be1bef038b6722404d9a4c2a");
             BigInteger BLOCKNUM = NativeContract.Ledger.Hash.MakeScript("currentIndex").Call().Single().GetInteger();
-            List<UInt160> AGENTS = Enumerable.Range(0, 21).Select(v => BNEO.MakeScript("agent", v)).SelectMany(a => a).ToArray().Call().TakeWhile(v => v.IsNull == false).Select(v => v.ToU160()).ToList();
+            List<UInt160> AGENTS = Enumerable.Range(0, 22).Select(v => BNEO.MakeScript("agent", v)).SelectMany(a => a).ToArray().Call().Where(v => v.IsNull == false).Select(v => v.ToU160()).ToList();
             $"BLOCKNUM: {BLOCKNUM}".Log();
             $"AGENTS: {String.Join(", ", AGENTS)}".Log();
 
