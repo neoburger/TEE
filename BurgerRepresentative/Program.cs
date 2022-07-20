@@ -25,12 +25,12 @@ namespace BurgerRepresentative
 
             $"GASBALANCE: {GASBALANCE}".Log();
 
-            if (GASBALANCE < THREASHOLD) {
+            if (GASBALANCE < THREASHOLD || GASBALANCE < 1) {
                 $"GASBALANCE < THREASHOLD: {GASBALANCE} < {THREASHOLD}".Log();
                 return;
             }
 
-            byte[] REWARD = NativeContract.GAS.Hash.MakeScript("transfer", new object[]{ REPRESENTATIVE, BNEO, GASBALANCE, "reward"});
+            byte[] REWARD = NativeContract.GAS.Hash.MakeScript("transfer", new object[]{ REPRESENTATIVE, BNEO, GASBALANCE-1, "reward"});
 
             REWARD.SendTx().Out();
         }
