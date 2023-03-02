@@ -53,8 +53,8 @@ namespace BurgerStrategist
             List<BigInteger> SELECT_HOLD = Solve(SELECT_K, SELECT_V, AGENT_HOLD.Sum());
             $"FINAL SELECT_HOLD: {String.Join(", ", SELECT_HOLD)}".Log();
 
-            BigInteger SCORE0 = AGENT_TO.Zip(AGENT_HOLD).Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v.First) * v.Second / (v.Second + CANDIDATES.Zip(CANDIDATE_V).FindBy(v.First))).Sum();
-            BigInteger SCORE = SELECTS.Zip(SELECT_HOLD).Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v.First) * v.Second / (v.Second + CANDIDATES.Zip(CANDIDATE_V).FindBy(v.First))).Sum();
+            BigInteger SCORE0 = AGENT_TO.Zip(AGENT_HOLD).Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v.First) * v.Second / (v.Second + CANDIDATES.Zip(CANDIDATE_V).FindByOrDefault(v.First))).Sum();
+            BigInteger SCORE = SELECTS.Zip(SELECT_HOLD).Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v.First) * v.Second / (v.Second + CANDIDATES.Zip(CANDIDATE_V).FindByOrDefault(v.First))).Sum();
             $"SCORE: {SCORE0} => {SCORE}".Log();
             (SCORE0 <= SCORE).Assert();
             if (SCORE / (SCORE + 1 - SCORE0) > 1024)
