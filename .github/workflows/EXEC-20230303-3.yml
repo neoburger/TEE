@@ -1,0 +1,19 @@
+name: EXEC-20230303-3
+on: workflow_dispatch
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Submit Execution
+      run: echo ${{ secrets.CONFIG_MAINNET }} | dotnet run --project LibWallet
+      env:
+        WIF: ${{ secrets.TEEWIF }}
+        RPC: https://n3seed2.ngd.network:10332
+        SCRIPT: 1111001513c01f0c0c747269675472616e736665720c142a4c9a4d4022678b03ef1bbe0834f966460dc44841627d5b520c21031de8a766da668b2935351acd8f23c26dbedd54b8208b135f0a636b544c9e0dad1112c01f0c0874726967566f74650c142a4c9a4d4022678b03ef1bbe0834f966460dc44841627d5b52
