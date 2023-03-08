@@ -43,7 +43,8 @@ namespace BurgerStrategist
             // TODO: FIX
             (AGENTS.Count < 12).Assert();
 
-            List<byte[]> SELECTS = CMS.Take(AGENTS.Count).ToList();
+            List<byte[]> SELECTS = CMS.FindAll(v => BNEO.MakeScript("candidate", v).Call().Single().GetBoolean()).Take(AGENTS.Count).ToList();
+            (AGENTS.Count <= SELECTS.Count).Assert();
             List<BigInteger> SELECT_K = SELECTS.Select(v => ELECTEDS.Zip(ELECTED_K).FindByOrDefault(v)).ToList();
             List<BigInteger> SELECT_V = SELECTS.Select(v => CANDIDATES.Zip(CANDIDATE_V).FindBy(v)).ToList();
             $"SELECTS: {String.Join(", ", SELECTS.Select(v => v.ToHexString()))}".Log();
