@@ -19,7 +19,7 @@ namespace BurgerStrategist
 
             List<UInt160> AGENTS = Enumerable.Range(0, 21).Select(v => BNEO.MakeScript("agent", v)).SelectMany(a => a).ToArray().Call().TakeWhile(v => v.IsNull == false).Select(v => v.ToU160()).ToList();
             (List<byte[]> CANDIDATES, List<BigInteger> CANDIDATE_VOTES) = NativeContract.NEO.Hash.MakeScript("getCandidates").Call().Single().ToVMArray().Select(v => v.ToVMStruct()).Map2(v => v.First().ToBytes(), v => v.Last().GetInteger());
-            (List<byte[]> AGENT_TO, List<BigInteger> AGENT_HOLD) = AGENTS.Select(v => NativeContract.NEO.Hash.MakeScript("getAccountState", v)).SelectMany(a => a).ToArray().Call().Select(v => v.ToVMStruct()).Map2(v => v.Last().ToBytes(), v => v.First().GetInteger());
+            (List<byte[]> AGENT_TO, List<BigInteger> AGENT_HOLD) = AGENTS.Select(v => NativeContract.NEO.Hash.MakeScript("getAccountState", v)).SelectMany(a => a).ToArray().Call().Select(v => v.ToVMStruct()).Map2(v => v[2].ToBytes(), v => v.First().GetInteger());
 
             $"AGENTS: {String.Join(", ", AGENTS)}".Log();
             $"CANDIDATES: {String.Join(", ", CANDIDATES.Select(v => v.ToHexString()))}".Log();
