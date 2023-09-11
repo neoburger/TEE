@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using LibHelper;
 using LibRPC;
 using LibWallet;
-using Neo.Wallets;
 
 namespace BurgerClaimer
 {
@@ -24,7 +23,7 @@ namespace BurgerClaimer
             $"BLOCKNUM: {BLOCKNUM}".Log();
             $"AGENTS: {String.Join(", ", AGENTS)}".Log();
 
-            List<BigInteger> UNCLAIMED = AGENTS.Select(v => (BigInteger)v.ToAddress(LibRPC.Program.settings.AddressVersion).GetUnclaimedGas()).ToList();
+            List<BigInteger> UNCLAIMED = AGENTS.Select(v => (BigInteger)v.GetUnclaimedGas()).ToList();
             List<BigInteger> GASBALANCE = AGENTS.Select(v => NativeContract.GAS.Hash.MakeScript("balanceOf", v).Call().Single().GetInteger()).ToList();
             List<BigInteger> MERGED = UNCLAIMED.Zip(GASBALANCE).Select(v => v.First > 10 ? v.First + v.Second : v.Second).ToList();
             $"UNCLAIMED: {String.Join(", ", UNCLAIMED)}".Log();
