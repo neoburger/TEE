@@ -13,9 +13,9 @@ namespace LibRPC
 {
     public static class Program
     {
-        private static readonly string RPC = "http://localhost:16868";
+        private static readonly string RPC = Environment.GetEnvironmentVariable("RPC");
         private static readonly Uri URI = new(RPC);
-        private static readonly ProtocolSettings settings = ProtocolSettings.Load("/dev/stdin");
+        public static readonly ProtocolSettings settings = ProtocolSettings.Load("/dev/stdin");
         private static readonly RpcClient CLI = new(URI, null, null, settings);
         private static readonly TransactionManagerFactory factory = new(CLI);
         static void Main(string[] args)
