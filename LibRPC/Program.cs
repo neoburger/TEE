@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Numerics;
 using LibHelper;
 using Neo;
+using Neo.IO.Json;
 using Neo.Network.P2P.Payloads;
 using Neo.Network.RPC;
 using Neo.Network.RPC.Models;
 using Neo.VM;
 using Neo.VM.Types;
+using Neo.Wallets;
 
 namespace LibRPC
 {
@@ -30,6 +33,8 @@ namespace LibRPC
             }
             return result.Stack;
         }
+        public static long GetUnclaimedGas(this string address) => CLI.GetUnclaimedGasAsync(address).GetAwaiter().GetResult().Unclaimed;
+        public static long GetUnclaimedGas(this UInt160 account) => GetUnclaimedGas(account.ToAddress(settings.AddressVersion));
         public static UInt256 Send(this Transaction tx) => CLI.SendRawTransactionAsync(tx).GetAwaiter().GetResult();
         public static TransactionManager TxMgr(this byte[] script, Signer[] signers = null) => factory.MakeTransactionAsync(script, signers).GetAwaiter().GetResult();
     }
