@@ -1,4 +1,4 @@
-name: BurgerClaimer
+name: BurgerClaimerSponsoredByFlamingo
 on: 
   workflow_dispatch:
   
@@ -21,3 +21,4 @@ jobs:
         WIF: ${{ secrets.TEEFLMWIF }}
         RPC: https://n3seed2.ngd.network:10332
         THREASHOLD: 15187654321
+        MOD: 3
