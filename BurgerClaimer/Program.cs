@@ -14,12 +14,15 @@ namespace BurgerClaimer
     class Program
     {
         private static readonly BigInteger THREASHOLD = BigInteger.Parse(Environment.GetEnvironmentVariable("THREASHOLD"));
+        private static readonly uint MOD = uint.TryParse(Environment.GetEnvironmentVariable("MOD"), out var result) ? result : 1;
 
         static void Main(string[] args)
         {
+            uint CHOSEN = (DateTime.UtcNow.ToTimestamp() / 3600) % MOD;
             UInt160 BNEO = UInt160.Parse("0x48c40d4666f93408be1bef038b6722404d9a4c2a");
             BigInteger BLOCKNUM = NativeContract.Ledger.Hash.MakeScript("currentIndex").Call().Single().GetInteger();
-            List<UInt160> AGENTS = Enumerable.Range(0, 22).Select(v => BNEO.MakeScript("agent", v)).SelectMany(a => a).ToArray().Call().Where(v => v.IsNull == false).Select(v => v.ToU160()).ToList();
+            List<UInt160> AGENTS = Enumerable.Range(0, 22).Where(v => v % MOD == CHOSEN).Select(v => BNEO.MakeScript("agent", v)).SelectMany(a => a).ToArray().Call().Where(v => v.IsNull == false).Select(v => v.ToU160()).ToList();
+            $"CHOSEN: {CHOSEN}, MOD: {MOD}".Log();
             $"BLOCKNUM: {BLOCKNUM}".Log();
             $"AGENTS: {String.Join(", ", AGENTS)}".Log();
 
