@@ -28,7 +28,7 @@ namespace BurgerClaimer
 
             List<BigInteger> UNCLAIMED = AGENTS.Select(v => (BigInteger)v.GetUnclaimedGas()).ToList();
             List<BigInteger> GASBALANCE = AGENTS.Select(v => NativeContract.GAS.Hash.MakeScript("balanceOf", v).Call().Single().GetInteger()).ToList();
-            List<BigInteger> MERGED = UNCLAIMED.Zip(GASBALANCE).Select(v => v.First > 10 ? v.First + v.Second : v.Second).ToList();
+            List<BigInteger> MERGED = UNCLAIMED.Zip(GASBALANCE).Select(v => v.First > THREASHOLD ? v.First + v.Second : v.Second).ToList();
             $"UNCLAIMED: {String.Join(", ", UNCLAIMED)}".Log();
             $"GASBALANCE: {String.Join(", ", GASBALANCE)}".Log();
             $"MERGED: {String.Join(", ", MERGED)}".Log();
