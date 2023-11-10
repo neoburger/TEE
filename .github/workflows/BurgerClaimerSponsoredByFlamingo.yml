@@ -1,0 +1,23 @@
+name: BurgerClaimer
+on: 
+  workflow_dispatch:
+  
+  schedule:
+  - cron: "0 * * * *"
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Run Claimer
+      run: echo ${{ secrets.CONFIG_MAINNET }} | dotnet run --project BurgerClaimer
+      env:
+        WIF: ${{ secrets.TEEFLMWIF }}
+        RPC: https://n3seed2.ngd.network:10332
+        THREASHOLD: 15187654321
