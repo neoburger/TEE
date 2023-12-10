@@ -1,0 +1,30 @@
+name: BurgerVote
+on: 
+  workflow_dispatch:
+    inputs:
+      I:
+        description: 'I: Integer'
+        required: true
+        default: '0'
+      TARGET:
+        description: 'TARGET: PublicKey'
+        required: true
+        default: '03734d4b637dbac04d0eb45198bfe9c5a42aca907e8fd1e741eb52def583347257'
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Run Claimer
+      run: echo ${{ secrets.CONFIG_MAINNET }} | dotnet run --project BurgerVote
+      env:
+        WIF: ${{ secrets.TEEWIF }}
+        RPC: https://n3seed1.ngd.network:10332
+        I: ${{ github.event.inputs.I }}
+        TARGET: ${{ github.event.inputs.TARGET }}
