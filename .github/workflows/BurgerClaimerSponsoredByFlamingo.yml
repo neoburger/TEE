@@ -20,5 +20,5 @@ jobs:
       env:
         WIF: ${{ secrets.TEEWIF }}
         RPC: https://n3seed1.ngd.network:10332
-        THREASHOLD: 6876543210
+        THREASHOLD: 5432109876
         MOD: 3
