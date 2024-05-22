@@ -14,7 +14,7 @@ namespace BurgerRepresentative
     class Program
     {
         private static readonly BigInteger THREASHOLD = BigInteger.Parse(Environment.GetEnvironmentVariable("THREASHOLD"));
-        private static readonly BigInteger TARGET = UInt160.Parse(Environment.GetEnvironmentVariable("TARGET") ?? "0x48c40d4666f93408be1bef038b6722404d9a4c2a");
+        private static readonly UInt160 TARGET = UInt160.Parse(Environment.GetEnvironmentVariable("TARGET") ?? "0x48c40d4666f93408be1bef038b6722404d9a4c2a");
 
 
         static void Main(string[] args)
