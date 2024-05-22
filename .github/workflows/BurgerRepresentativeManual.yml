@@ -1,0 +1,31 @@
+name: BurgerRepresentative
+on: 
+  workflow_dispatch:
+    inputs:
+      THREASHOLD:
+        description: 'THREASHOLD: Integer'
+        required: true
+        default: '0'
+      TARGET:
+        description: 'TARGET: SH'
+        required: true
+        default: '0x48c40d4666f93408be1bef038b6722404d9a4c2a'
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Run Claimer
+      run: echo ${{ secrets.CONFIG_MAINNET }} | dotnet run --project BurgerRepresentative
+      env:
+        WIF: ${{ secrets.NBNODEWIF }}
+        RPC: https://n3seed2.ngd.network:10332
+        TARGET: ${{ github.event.inputs.TARGET }}
+        THREASHOLD: ${{ github.event.inputs.THREASHOLD }}
